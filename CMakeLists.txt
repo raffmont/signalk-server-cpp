@@ -24,7 +24,8 @@ message("OpenSSL include dir: ${OPENSSL_INCLUDE_DIR}")
 message("OpenSSL libraries: ${OPENSSL_LIBRARIES}")
 
 include_directories(${OPENSSL_INCLUDE_DIR})
-list(APPEND LIB_LIST ${OPENSSL_LIBRARIES})
+link_directories(${OPENSSL_LIBRARIES})
+#list(APPEND LIB_LIST ${OPENSSL_LIBRARIES})
 
 find_package( ZLIB REQUIRED )
 
@@ -104,5 +105,5 @@ add_dependencies(${PROJECT_NAME} uWebSockets)
 
 
 # Add the libraries to the linker
-target_link_libraries(${PROJECT_NAME} ${LIBUV} ${LIBUWS}  ${ZLIB_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${LIBUV} ${LIBUWS} ${ZLIB_LIBRARIES} ${OPENSSL_LIBRARIES})
 
