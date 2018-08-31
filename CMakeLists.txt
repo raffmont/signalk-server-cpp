@@ -26,6 +26,9 @@ message("OpenSSL libraries: ${OPENSSL_LIBRARIES}")
 include_directories(${OPENSSL_INCLUDE_DIR})
 list(APPEND LIB_LIST ${OPENSSL_LIBRARIES})
 
+find_package( ZLIB REQUIRED )
+
+
 #### json
 
 ExternalProject_Add(json
@@ -75,6 +78,12 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     set(LIBUV ${EXTERNAL_INSTALL_LOCATION}/lib/libuv.dylib)
 endif()
 
+# Set the library name
+set(LIBUWS ${EXTERNAL_INSTALL_LOCATION}/lib/libuWS)
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    set(LIBUWS ${EXTERNAL_INSTALL_LOCATION}/lib/libuWS.dylib)
+endif()
+
 
 # Add the executables to the project
 add_executable(
@@ -95,5 +104,5 @@ add_dependencies(${PROJECT_NAME} uWebSockets)
 
 
 # Add the libraries to the linker
-target_link_libraries(${PROJECT_NAME} ${LIBUV})
+target_link_libraries(${PROJECT_NAME} ${LIBUV} ${LIBUWS}  ${ZLIB_LIBRARIES})
 
