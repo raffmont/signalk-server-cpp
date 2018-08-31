@@ -48,7 +48,7 @@ int main() {
         h.getDefaultGroup<uWS::SERVER>()
                 .broadcast(x.c_str(), x.size(), uWS::OpCode::TEXT);
     });
-    h.connect("ws://localhost:3000/signalk/v1/stream?subscribe=all", nullptr);
+    h.connect("ws://demo.signalk.org/signalk/v1/stream?subscribe=all", nullptr);
     h.listen(2000);
 
     h.run();
