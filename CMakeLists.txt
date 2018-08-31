@@ -89,8 +89,10 @@ add_executable(
 # Expicit the dependencies
 add_dependencies(${PROJECT_NAME} json)
 add_dependencies(${PROJECT_NAME} variant)
+add_dependencies(${PROJECT_NAME} libuv)
 add_dependencies(uWebSockets libuv)
 add_dependencies(${PROJECT_NAME} uWebSockets)
+
 
 # Add the libraries to the linker
 target_link_libraries(${PROJECT_NAME} ${LIBUV})
