@@ -4,10 +4,27 @@ project(signalk_server_cpp)
 set(CMAKE_CXX_STANDARD 11)
 
 
+# Include the support to external projects
 include(ExternalProject)
 
+# Set the external install location
 set(EXTERNAL_INSTALL_LOCATION ${CMAKE_BINARY_DIR}/external)
 
+# Add to the includes
+include_directories(${EXTERNAL_INSTALL_LOCATION}/include)
+
+# Add to the libraries
+link_directories(${EXTERNAL_INSTALL_LOCATION}/lib)
+
+
+# TODO: Add support for STATIC also.
+find_package(OpenSSL REQUIRED)
+
+message("OpenSSL include dir: ${OPENSSL_INCLUDE_DIR}")
+message("OpenSSL libraries: ${OPENSSL_LIBRARIES}")
+
+include_directories(${OPENSSL_INCLUDE_DIR})
+list(APPEND LIB_LIST ${OPENSSL_LIBRARIES})
 
 #### json
 
@@ -40,23 +57,16 @@ ExternalProject_Add(libuv
 ExternalProject_Add(uWebSockets
         GIT_REPOSITORY https://github.com/uNetworking/uWebSockets.git
         TIMEOUT 360
-        CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=${EXTERNAL_INSTALL_LOCATION}
+        BUILD_IN_SOURCE 1
+        CONFIGURE_COMMAND export PREFIX=${EXTERNAL_INSTALL_LOCATION}
         BUILD_COMMAND make
         INSTALL_COMMAND make install
         )
 
 
-include_directories(${EXTERNAL_INSTALL_LOCATION}/include)
-link_directories(${EXTERNAL_INSTALL_LOCATION}/lib)
 
-# TODO: Add support for STATIC also.
-find_package(OpenSSL REQUIRED)
 
-message("OpenSSL include dir: ${OPENSSL_INCLUDE_DIR}")
-message("OpenSSL libraries: ${OPENSSL_LIBRARIES}")
 
-include_directories(${OPENSSL_INCLUDE_DIR})
-list(APPEND LIB_LIST ${OPENSSL_LIBRARIES})
 
 
 # Set the library name
