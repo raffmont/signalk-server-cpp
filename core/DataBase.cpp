@@ -5,8 +5,8 @@
 #include <map>
 #include <string>
 #include <sstream>
-#include "../extras/variant/variant.h"
-#include "../extras/json/json.hpp"
+#include <mpark/variant.hpp>
+#include <nlohmann/json.hpp>
 #include "ReaderHandler.h"
 #include "DataBase.h"
 #include <list>
