@@ -60,7 +60,7 @@ ExternalProject_Add(uWebSockets
         BUILD_IN_SOURCE 1
         CONFIGURE_COMMAND echo Noghing
         BUILD_COMMAND make PREFIX=${EXTERNAL_INSTALL_LOCATION} CPPFLAGS=-I${EXTERNAL_INSTALL_LOCATION}/include/
-        INSTALL_COMMAND make install
+        INSTALL_COMMAND make PREFIX=${EXTERNAL_INSTALL_LOCATION} install
         )
 
 
@@ -70,9 +70,9 @@ ExternalProject_Add(uWebSockets
 
 
 # Set the library name
-set(LIBUV ${CMAKE_CURRENT_BINARY_DIR}/extras/libuv/libuv)
+set(LIBUV ${EXTERNAL_INSTALL_LOCATION}/lib/libuv)
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    set(LIBUV ${CMAKE_CURRENT_BINARY_DIR}/extras/libuv/libuv.dylib)
+    set(LIBUV ${EXTERNAL_INSTALL_LOCATION}/lib/libuv.dylib)
 endif()
 
 
