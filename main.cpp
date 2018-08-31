@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "core/DataBase.h"
-#include "extras/uWebSockets/src/uWS.h"
+#include <uwebsocket/uWS.h>
 #include <iostream>
 #include <fstream>
 #include <streambuf>
