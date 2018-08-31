@@ -11,7 +11,7 @@ include(ExternalProject)
 set(EXTERNAL_INSTALL_LOCATION ${CMAKE_BINARY_DIR}/external)
 
 # Add to the includes
-include_directories(${EXTERNAL_INSTALL_LOCATION}/include)
+include_directories(SYSTEM ${EXTERNAL_INSTALL_LOCATION}/include)
 
 # Add to the libraries
 link_directories(${EXTERNAL_INSTALL_LOCATION}/lib)
@@ -58,8 +58,8 @@ ExternalProject_Add(uWebSockets
         GIT_REPOSITORY https://github.com/uNetworking/uWebSockets.git
         TIMEOUT 360
         BUILD_IN_SOURCE 1
-        CONFIGURE_COMMAND export PREFIX=${EXTERNAL_INSTALL_LOCATION}
-        BUILD_COMMAND make
+        CONFIGURE_COMMAND echo Noghing
+        BUILD_COMMAND make PREFIX=${EXTERNAL_INSTALL_LOCATION} CPPFLAGS=-I${EXTERNAL_INSTALL_LOCATION}/include/
         INSTALL_COMMAND make install
         )
 
