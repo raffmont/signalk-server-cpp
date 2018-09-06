@@ -93,7 +93,7 @@ add_executable(
         core/DataBase.h
         core/DataBase.cpp
         core/ReaderHandler.h
-)
+        core/DataProvider.cpp core/DataProvider.hpp core/WebSocketServerDataProvider.cpp core/WebSocketServerDataProvider.hpp core/WebSocketClientDataProvider.cpp core/WebSocketClientDataProvider.hpp)
 
 
 # Expicit the dependencies
