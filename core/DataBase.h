@@ -21,6 +21,11 @@ namespace SignalK {
         DataBase(const DataBase& other);
         DataBase(SignalK::DataBase&& other);
         ~DataBase();
+        DataBase& operator=(DataBase other) {
+            this->root=other.root;
+            this->bus=other.bus;
+            return *this;
+        }
         void load(const std::string& json, bool flatten=false, bool strict = false);
         void load(std::istream& input, bool flatten=false, bool strict = false);
         std::string toJson();
