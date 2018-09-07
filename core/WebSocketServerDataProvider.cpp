@@ -6,13 +6,10 @@
 
 
 
-WebSocketServerDataProvider::WebSocketServerDataProvider(SignalK::DataBase& document, int port) {
+WebSocketServerDataProvider::WebSocketServerDataProvider(SignalK::DataBase *document, int port) {
     std::cout << "WebSocketServerDataProvider::WebSocketServerDataProvider(document,port)\n";
-    std::cout << "ASelf:[" << document.getSelf() << "]\n";
-
     this->document=document;
     this->port=port;
-    std::cout << "BSelf:[" << this->document.getSelf() << "]\n";
 }
 WebSocketServerDataProvider::~WebSocketServerDataProvider() {
     std::cout << "WebSocketServerDataProvider::~WebSocketServerDataProvider()\n";
@@ -28,27 +25,24 @@ void WebSocketServerDataProvider::run(){
                 std::string msg(message, length);
                 clock_t currTime;
 
-                document.update(msg);
+                document->update(msg);
 
 
             });
-    std::cout << "WebSocketServerDataProvider::run()::1\n";
 
     h.onDisconnection([this](uWS::WebSocket<uWS::CLIENT> *ws, int code, char *message, size_t length) {
         h.getDefaultGroup<uWS::SERVER>().close();
 
     });
 
-    std::cout << "WebSocketServerDataProvider::run()::2\n";
 
-    document.SubscribeUpdate([this](std::string x) {
+    document->SubscribeUpdate([this](std::string x) {
         h.getDefaultGroup<uWS::SERVER>()
                 .broadcast(x.c_str(), x.size(), uWS::OpCode::TEXT);
     });
 
     std::cout << "Listening on port " << port << "\n";
     h.listen(port);
-    std::cout << "Running...\n";
     h.run();
 
 }

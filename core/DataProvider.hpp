@@ -12,7 +12,7 @@
 class DataProvider{
 public:
     DataProvider();
-    DataProvider(SignalK::DataBase& document);
+    DataProvider(SignalK::DataBase *document);
     virtual ~DataProvider();
     void start();
     void join();
@@ -21,7 +21,7 @@ public:
 protected:
     std::thread t;
     bool threadStop = false;
-    SignalK::DataBase document;
+    SignalK::DataBase *document;
 };
 
 

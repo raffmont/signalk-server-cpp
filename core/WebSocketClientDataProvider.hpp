@@ -14,7 +14,7 @@ public:
 
 
     virtual void run();
-    WebSocketClientDataProvider(SignalK::DataBase& document, std::string& url);
+    WebSocketClientDataProvider(SignalK::DataBase *document, std::string url);
     virtual ~WebSocketClientDataProvider();
 
 private:

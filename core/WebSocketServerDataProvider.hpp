@@ -15,7 +15,7 @@ public:
 
 
     virtual void run();
-    WebSocketServerDataProvider(SignalK::DataBase& document, int port);
+    WebSocketServerDataProvider(SignalK::DataBase *document, int port);
     virtual ~WebSocketServerDataProvider();
 
 private:
