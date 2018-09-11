@@ -7,15 +7,14 @@
 
 
 #include <uWS/Hub.h>
-#include "DataBase.h"
+#include "../DataBase.h"
 #include "DataProvider.hpp"
+#include "SignalKDataProvider.hpp"
 
-class WebSocketServerDataProvider : public DataProvider {
+class WebSocketServerDataProvider : public SignalKDataProvider {
 public:
-
-
     virtual void run();
-    WebSocketServerDataProvider(SignalK::DataBase *document, int port);
+    WebSocketServerDataProvider(std::string name,SignalK::DataBase *document, int port);
     virtual ~WebSocketServerDataProvider();
 
 private:

@@ -2,47 +2,43 @@
 // Created by Raffaele Montella on 06/09/2018.
 //
 
-#include "WebSocketServerDataProvider.hpp"
+#include "WebSocketClientDataProvider.hpp"
 
 
 
-WebSocketServerDataProvider::WebSocketServerDataProvider(SignalK::DataBase *document, int port) {
-    std::cout << "WebSocketServerDataProvider::WebSocketServerDataProvider(document,port)\n";
+WebSocketClientDataProvider::WebSocketClientDataProvider(std::string name,SignalK::DataBase *document, std::string url) {
+    std::cout << "WebSocketClientDataProvider::WebSocketClientDataProvider(name,document,url)\n";
+    this->name=name;
     this->document=document;
-    this->port=port;
+    this->url=url;
 }
-WebSocketServerDataProvider::~WebSocketServerDataProvider() {
-    std::cout << "WebSocketServerDataProvider::~WebSocketServerDataProvider()\n";
+WebSocketClientDataProvider::~WebSocketClientDataProvider() {
+    std::cout << "WebSocketClientDataProvider::~WebSocketClientDataProvider()\n";
 }
 
 
-void WebSocketServerDataProvider::run(){
-    std::cout << "WebSocketServerDataProvider::run()\n";
+void WebSocketClientDataProvider::run(){
+    std::cout << "WebSocketClientDataProvider::run()\n";
 
 
     h.getDefaultGroup<uWS::CLIENT>().onMessage(
             [this](uWS::WebSocket<uWS::CLIENT> *ws, char *message, size_t length, uWS::OpCode x) {
                 std::string msg(message, length);
-                clock_t currTime;
-
                 document->update(msg);
-
-
             });
 
     h.onDisconnection([this](uWS::WebSocket<uWS::CLIENT> *ws, int code, char *message, size_t length) {
         h.getDefaultGroup<uWS::SERVER>().close();
 
     });
-
-
     document->SubscribeUpdate([this](std::string x) {
         h.getDefaultGroup<uWS::SERVER>()
                 .broadcast(x.c_str(), x.size(), uWS::OpCode::TEXT);
     });
 
-    std::cout << "Listening on port " << port << "\n";
-    h.listen(port);
+
+    h.connect(url, nullptr);
+    std::cout << "Connecte to " << url << "\n";
     h.run();
 
 }
