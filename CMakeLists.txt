@@ -3,6 +3,7 @@ project(signalk_server_cpp)
 
 set(CMAKE_CXX_STANDARD 11)
 
+# TODO: https://developer.android.com/ndk/guides/cmake
 
 # Include the support to external projects
 include(ExternalProject)
@@ -28,6 +29,22 @@ link_directories(${OPENSSL_LIBRARIES})
 #list(APPEND LIB_LIST ${OPENSSL_LIBRARIES})
 
 find_package( ZLIB REQUIRED )
+
+#### serial
+
+#ExternalProject_Add(serial
+#        GIT_REPOSITORY https://github.com/wjwwood/serial.git
+#        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_LOCATION}
+#        TIMEOUT 360
+#        )
+#### marnav
+
+#ExternalProject_Add(marnav
+#        GIT_REPOSITORY https://github.com/mariokonrad/marnav.git
+#        CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_LOCATION}
+#        TIMEOUT 360
+#        )
+#
 
 
 #### json
@@ -93,10 +110,12 @@ add_executable(
         core/DataBase.h
         core/DataBase.cpp
         core/ReaderHandler.h
-        core/DataProvider.cpp core/DataProvider.hpp core/WebSocketServerDataProvider.cpp core/WebSocketServerDataProvider.hpp core/WebSocketClientDataProvider.cpp core/WebSocketClientDataProvider.hpp)
+        core/providers/DataProvider.cpp core/providers/DataProvider.hpp core/providers/WebSocketServerDataProvider.cpp core/providers/WebSocketServerDataProvider.hpp core/providers/WebSocketClientDataProvider.cpp core/providers/WebSocketClientDataProvider.hpp core/providers/NMEA0183DataProvider.cpp core/providers/NMEA0183DataProvider.hpp core/providers/SignalKDataProvider.cpp core/providers/SignalKDataProvider.hpp core/providers/FileNMEA0183DataProvider.cpp core/providers/FileNMEA0183DataProvider.hpp)
 
 
 # Expicit the dependencies
+#add_dependencies(${PROJECT_NAME} serial)
+#add_dependencies(${PROJECT_NAME} marnav)
 add_dependencies(${PROJECT_NAME} json)
 add_dependencies(${PROJECT_NAME} variant)
 add_dependencies(${PROJECT_NAME} libuv)
