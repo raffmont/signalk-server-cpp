@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include "core/DataBase.h"
-#include "core/WebSocketServerDataProvider.hpp"
-#include "core/WebSocketClientDataProvider.hpp"
+#include "core/providers/WebSocketServerDataProvider.hpp"
+#include "core/providers/WebSocketClientDataProvider.hpp"
+#include "core/providers/FileNMEA0183DataProvider.hpp"
 #include <uWS/uWS.h>
 #include <iostream>
 #include <fstream>
@@ -22,16 +23,37 @@ int main() {
     document->update(init);
 
 
-    //std::vector<DataProvider *> dataProviders(std::thread::hardware_concurrency());
 
+
+    string filePath="/Users/raffaelemontella/Desktop/20060114.nmea";
+    long millis=1000;
     string url="ws://localhost:3000/signalk/v1/stream?subscribe=all";
     int port=2000;
-    WebSocketServerDataProvider p1(document,port);
-    WebSocketClientDataProvider p2(document,url);
-    p1.start();
-    p2.start();
-    p2.join();
-    p1.join();
+
+    WebSocketServerDataProvider p1("WebSocket Server",document,port);
+    WebSocketClientDataProvider p2("WebSocket Client", document,url);
+    FileNMEA0183DataProvider p3("NMEA0183 file reader",document,filePath,millis);
+
+    std::vector<DataProvider *> dataProviders(std::thread::hardware_concurrency());
+    dataProviders.push_back(&p1);
+    dataProviders.push_back(&p2);
+    dataProviders.push_back(&p3);
+    cout << "------------------------\n";
+
+    for (DataProvider *dataProvider :  dataProviders) {
+        if (dataProvider != NULL) {
+            std::cout << "Starting: " << dataProvider->getName() << "\n";
+            dataProvider->start();
+        }
+    }
+
+    for (DataProvider *dataProvider :  dataProviders){
+        if (dataProvider != NULL) {
+            std::cout << "Joining: " << dataProvider->getName() << "\n";
+            dataProvider->join();
+        }
+    }
+
     delete(document);
     return 0;
 }
