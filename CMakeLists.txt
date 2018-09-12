@@ -30,6 +30,9 @@ link_directories(${OPENSSL_LIBRARIES})
 
 find_package( ZLIB REQUIRED )
 
+
+
+
 #### serial
 
 #ExternalProject_Add(serial
@@ -37,14 +40,16 @@ find_package( ZLIB REQUIRED )
 #        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_LOCATION}
 #        TIMEOUT 360
 #        )
+
+
 #### marnav
 
-#ExternalProject_Add(marnav
-#        GIT_REPOSITORY https://github.com/mariokonrad/marnav.git
-#        CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_LOCATION}
-#        TIMEOUT 360
-#        )
-#
+ExternalProject_Add(marnav
+        GIT_REPOSITORY https://github.com/raffmont/marnav.git
+        CMAKE_ARGS -DENABLE_STATIC=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_LOCATION}
+        TIMEOUT 360
+        )
+
 
 
 #### json
@@ -84,12 +89,6 @@ ExternalProject_Add(uWebSockets
         INSTALL_COMMAND make PREFIX=${EXTERNAL_INSTALL_LOCATION} install
         )
 
-
-
-
-
-
-
 # Set the library name
 set(LIBUV ${EXTERNAL_INSTALL_LOCATION}/lib/libuv)
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
@@ -100,6 +99,12 @@ endif()
 set(LIBUWS ${EXTERNAL_INSTALL_LOCATION}/lib/libuWS)
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     set(LIBUWS ${EXTERNAL_INSTALL_LOCATION}/lib/libuWS.dylib)
+endif()
+
+# Set the library name
+set(LIBMARNAV ${EXTERNAL_INSTALL_LOCATION}/lib/libmarnav)
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    set(LIBMARNAV ${EXTERNAL_INSTALL_LOCATION}/lib/libmarnav.dylib)
 endif()
 
 
@@ -115,7 +120,7 @@ add_executable(
 
 # Expicit the dependencies
 #add_dependencies(${PROJECT_NAME} serial)
-#add_dependencies(${PROJECT_NAME} marnav)
+add_dependencies(${PROJECT_NAME} marnav)
 add_dependencies(${PROJECT_NAME} json)
 add_dependencies(${PROJECT_NAME} variant)
 add_dependencies(${PROJECT_NAME} libuv)
@@ -124,5 +129,5 @@ add_dependencies(${PROJECT_NAME} uWebSockets)
 
 
 # Add the libraries to the linker
-target_link_libraries(${PROJECT_NAME} ${LIBUV} ${LIBUWS} ${ZLIB_LIBRARIES} ${OPENSSL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${LIBMARNAV} ${LIBUV} ${LIBUWS} ${ZLIB_LIBRARIES} ${OPENSSL_LIBRARIES})
 
