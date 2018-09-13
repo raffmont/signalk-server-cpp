@@ -55,6 +55,7 @@ ExternalProject_Add(marnav
 #### json
 
 ExternalProject_Add(json
+        GIT_TAG v3.2.0
         GIT_REPOSITORY https://github.com/nlohmann/json.git
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_LOCATION}
         TIMEOUT 360
@@ -112,8 +113,8 @@ endif()
 add_executable(
         ${PROJECT_NAME}
         main.cpp
-        core/DataBase.h
-        core/DataBase.cpp
+        core/SignalKModel.h
+        core/SignalKModel.cpp
         core/ReaderHandler.h
         core/providers/DataProvider.cpp core/providers/DataProvider.hpp core/providers/WebSocketServerDataProvider.cpp core/providers/WebSocketServerDataProvider.hpp core/providers/WebSocketClientDataProvider.cpp core/providers/WebSocketClientDataProvider.hpp core/providers/NMEA0183DataProvider.cpp core/providers/NMEA0183DataProvider.hpp core/providers/SignalKDataProvider.cpp core/providers/SignalKDataProvider.hpp core/providers/FileNMEA0183DataProvider.cpp core/providers/FileNMEA0183DataProvider.hpp)
 
