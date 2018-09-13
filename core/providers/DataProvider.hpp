@@ -5,14 +5,19 @@
 #ifndef SIGNALK_SERVER_CPP_DATAPROVIDER_HPP
 #define SIGNALK_SERVER_CPP_DATAPROVIDER_HPP
 
+#include <iostream>
 #include <thread>
 #include <uWS/Hub.h>
-#include "../DataBase.h"
+#include <nlohmann/json.hpp>
+
+
+#include "../SignalKModel.h"
+
 
 class DataProvider{
 public:
     DataProvider();
-    DataProvider(std::string name,SignalK::DataBase *document);
+    DataProvider(std::string name,SignalK::SignalKModel *document);
     virtual ~DataProvider();
     void start();
     void join();
@@ -23,7 +28,7 @@ protected:
     std::string name;
     std::thread t;
     bool threadStop = false;
-    SignalK::DataBase *document=NULL;
+    SignalK::SignalKModel *document=NULL;
 };
 
 

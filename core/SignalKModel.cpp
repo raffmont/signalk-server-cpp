@@ -8,7 +8,7 @@
 #include <mpark/variant.hpp>
 #include <nlohmann/json.hpp>
 #include "ReaderHandler.h"
-#include "DataBase.h"
+#include "SignalKModel.h"
 #include <list>
 #include <tuple>
 #include <mutex>
@@ -44,7 +44,7 @@ class SignalK::DataBase::UpdateBus
 		std::vector<mpm::cookie> subscriptions;
 };
 */
-class SignalK::DataBase::UpdateBus
+class SignalK::SignalKModel::UpdateBus
 {
 public:
     void Subscribe(std::function<void(std::string)> f)
@@ -61,7 +61,7 @@ private:
     std::vector<std::function<void(std::string)>> subscriptions;
 };
 
-class SignalK::DataBase::Node
+class SignalK::SignalKModel::Node
 {
 public:
     mpark::variant<std::string, double, bool> value;
@@ -512,60 +512,60 @@ private:
     std::mutex writeLock;
     bool valueNode = false;
 };
-const std::string SignalK::DataBase::Node::valueName("value");
+const std::string SignalK::SignalKModel::Node::valueName("value");
 
 
-SignalK::DataBase::DataBase()
+SignalK::SignalKModel::SignalKModel()
 {
     root = nullptr;
-    bus = new SignalK::DataBase::UpdateBus();
+    bus = new SignalK::SignalKModel::UpdateBus();
 }
-SignalK::DataBase::DataBase(const std::string & self, const std::string & version)
+SignalK::SignalKModel::SignalKModel(const std::string & self, const std::string & version)
 {
     root = new Node();
     root->addChild("self", new Node(self));
     root->addChild("vessels", new Node());
     root->addChild("sources", new Node());
     root->addChild("version", new Node(version));
-    bus = new SignalK::DataBase::UpdateBus();
+    bus = new SignalK::SignalKModel::UpdateBus();
 }
-SignalK::DataBase::DataBase(const SignalK::DataBase& other)
-        : SignalK::DataBase::DataBase()
+SignalK::SignalKModel::SignalKModel(const SignalK::SignalKModel& other)
+        : SignalK::SignalKModel::SignalKModel()
 {
     if (other.root != nullptr)
         root = new Node(*(other.root));
-    bus = new SignalK::DataBase::UpdateBus();
+    bus = new SignalK::SignalKModel::UpdateBus();
 }
-SignalK::DataBase::DataBase(SignalK::DataBase&& other)
-        : SignalK::DataBase::DataBase()
+SignalK::SignalKModel::SignalKModel(SignalK::SignalKModel&& other)
+        : SignalK::SignalKModel::SignalKModel()
 {
     if (other.root != nullptr)
     {
         root = other.root;
         other.root = nullptr;
     }
-    bus = new SignalK::DataBase::UpdateBus();
+    bus = new SignalK::SignalKModel::UpdateBus();
 }
-SignalK::DataBase::DataBase(const std::string& json, bool flatten, bool strict)
-        : SignalK::DataBase::DataBase()
+SignalK::SignalKModel::SignalKModel(const std::string& json, bool flatten, bool strict)
+        : SignalK::SignalKModel::SignalKModel()
 {
     load(json, flatten, strict);
-    bus = new SignalK::DataBase::UpdateBus();
+    bus = new SignalK::SignalKModel::UpdateBus();
 }
 
-SignalK::DataBase::~DataBase()
+SignalK::SignalKModel::~SignalKModel()
 {
     if (root != nullptr) delete root;
     if (bus != nullptr) delete bus;
 }
-void SignalK::DataBase::load(const std::string& json, bool flatten, bool strict)
+void SignalK::SignalKModel::load(const std::string& json, bool flatten, bool strict)
 {
     if (root != nullptr) delete root;
     root = nullptr;
     auto tree = nlohmann::json::parse(json);
     root  = Node::recursiveLoad(tree, flatten, strict);
 }
-void SignalK::DataBase::load(std::istream& input, bool flatten, bool strict)
+void SignalK::SignalKModel::load(std::istream& input, bool flatten, bool strict)
 {
     if (root != nullptr) delete root;
     root = nullptr;
@@ -573,12 +573,12 @@ void SignalK::DataBase::load(std::istream& input, bool flatten, bool strict)
     input >> tree;
     root = Node::recursiveLoad(tree, flatten, strict);
 }
-std::string SignalK::DataBase::toJson()
+std::string SignalK::SignalKModel::toJson()
 {
     if (root == nullptr) return std::string();
     else return root->toJson();
 }
-std::string SignalK::DataBase::subtree(std::string path)
+std::string SignalK::SignalKModel::subtree(std::string path)
 {
     if(root==nullptr) return std::string("");
     Node * res = nullptr;
@@ -593,7 +593,7 @@ std::string SignalK::DataBase::subtree(std::string path)
     return fres;
 
 }
-std::string SignalK::DataBase::getVersion()
+std::string SignalK::SignalKModel::getVersion()
 {
     if (root == nullptr) return std::string();
     else {
@@ -603,7 +603,7 @@ std::string SignalK::DataBase::getVersion()
         else return std::string();
     }
 }
-std::string SignalK::DataBase::getSelf()
+std::string SignalK::SignalKModel::getSelf()
 {
     if (root == nullptr) return std::string();
     else {
@@ -613,7 +613,7 @@ std::string SignalK::DataBase::getSelf()
         else return std::string();
     }
 }
-bool SignalK::DataBase::update(std::string update)
+bool SignalK::SignalKModel::update(std::string update)
 {
     try
     {
@@ -750,7 +750,7 @@ bool SignalK::DataBase::update(std::string update)
     }
 }
 
-std::string SignalK::DataBase::readUpdate(std::istream & input)
+std::string SignalK::SignalKModel::readUpdate(std::istream & input)
 {
     try {
 
@@ -766,12 +766,12 @@ std::string SignalK::DataBase::readUpdate(std::istream & input)
     }
 }
 
-void SignalK::DataBase::SubscribeUpdate(std::function<void(std::string)> f)
+void SignalK::SignalKModel::SubscribeUpdate(std::function<void(std::string)> f)
 {
     bus->Subscribe(f);
 }
 
-std::ostream & SignalK::operator<<(std::ostream & os, const DataBase & dt)
+std::ostream & SignalK::operator<<(std::ostream & os, const SignalKModel & dt)
 {
     if (dt.root == nullptr) os << "-- --" << std::endl;
     else dt.root->recursiveOut(os, "");

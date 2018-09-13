@@ -1,5 +1,5 @@
-#include <stdio.h>
-#include "core/DataBase.h"
+#include <cstdio>
+#include "core/SignalKModel.h"
 #include "core/providers/WebSocketServerDataProvider.hpp"
 #include "core/providers/WebSocketClientDataProvider.hpp"
 #include "core/providers/FileNMEA0183DataProvider.hpp"
@@ -7,7 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include <streambuf>
-#include <time.h>
+#include <ctime>
 #include <chrono>
 #include <thread>
 
@@ -17,7 +17,7 @@ using namespace std;
 
 int main() {
 
-    SignalK::DataBase *document=new SignalK::DataBase("urn:mrn:signalk:uuid:705f5f1a-efaf-44aa-9cb8-a0fd6305567c", "v1.0.0");
+    SignalK::SignalKModel *document=new SignalK::SignalKModel("urn:mrn:signalk:uuid:705f5f1a-efaf-44aa-9cb8-a0fd6305567c", "v1.0.0");
     string init = "{\"updates\":[{\"source\":{\"sentence\":\"GLL\",\"talker\":\"GP\",\"type\":\"NMEA0183\",\"label\":\"nmeaFromFile\"},\"timestamp\":\"2017-05-03T10:17:52.000Z\",\"values\":[{\"path\":\"navigation.position\",\"value\":{\"longitude\":13.505133333333333,\"latitude\":50.0541}}]}],\"context\":\"vessels.urn:mrn:signalk:uuid:c0d79334-4e25-4245-8892-54e8ccc8021d\"}";
 
     document->update(init);

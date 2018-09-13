@@ -2,26 +2,27 @@
 // Created by Giuseppe Dragone
 //
 
-#ifndef SIGNALK_SERVER_CPP_DATABASE_H
-#define SIGNALK_SERVER_CPP_DATABASE_H
+#ifndef SIGNALK_SERVER_CPP_SIGNALKMODEL_H
+#define SIGNALK_SERVER_CPP_SIGNALKMODEL_H
 
 #include <string>
 #include <iostream>
 #include <functional>
 
 namespace SignalK {
-    class DataBase
+    
+    class SignalKModel
     {
 
     public:
 
-        DataBase();
-        DataBase(const std::string& self, const std::string& version);
-        DataBase(const std::string& json, bool flatten, bool strict);
-        DataBase(const DataBase& other);
-        DataBase(SignalK::DataBase&& other);
-        ~DataBase();
-        DataBase& operator=(DataBase other) {
+        SignalKModel();
+        SignalKModel(const std::string& self, const std::string& version);
+        SignalKModel(const std::string& json, bool flatten, bool strict);
+        SignalKModel(const SignalKModel& other);
+        SignalKModel(SignalK::SignalKModel&& other);
+        ~SignalKModel();
+        SignalKModel& operator=(SignalKModel other) {
             this->root=other.root;
             this->bus=other.bus;
             return *this;
@@ -42,13 +43,13 @@ namespace SignalK {
         std::string readUpdate(std::istream& input);
         void SubscribeUpdate(std::function<void(std::string)> f);
     protected:
-        friend std::ostream& operator<< (std::ostream& os, const DataBase& dt);
+        friend std::ostream& operator<< (std::ostream& os, const SignalKModel& dt);
         class Node;
         Node* root;
         class UpdateBus;
         UpdateBus * bus;
     };
-    std::ostream& operator<< (std::ostream& os, const DataBase& dt);
+    std::ostream& operator<< (std::ostream& os, const SignalKModel& dt);
 }
 
-#endif //SIGNALK_SERVER_CPP_DATABASE_H
+#endif //SIGNALK_SERVER_CPP_SIGNALKMODEL_H

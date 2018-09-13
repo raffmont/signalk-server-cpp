@@ -4,7 +4,7 @@
 
 #include "FileNMEA0183DataProvider.hpp"
 
-FileNMEA0183DataProvider::FileNMEA0183DataProvider(std::string name,SignalK::DataBase *document, std::string filePath, int millis) {
+FileNMEA0183DataProvider::FileNMEA0183DataProvider(std::string name,SignalK::SignalKModel *document, std::string filePath, int millis) {
     std::cout << "FileNMEA0183DataProvider::FileNMEA0183DataProvider(" << document->getSelf() << "," << filePath <<"," << millis << ")\n";
     this->name=name;
     this->document=document;
