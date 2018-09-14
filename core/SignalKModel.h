@@ -8,6 +8,15 @@
 #include <string>
 #include <iostream>
 #include <functional>
+#include <map>
+#include <string>
+#include <sstream>
+#include <list>
+#include <tuple>
+#include <mutex>
+
+#include <mpark/variant.hpp>
+#include <nlohmann/json.hpp>
 
 namespace SignalK {
     
@@ -40,6 +49,7 @@ namespace SignalK {
             return subtree("vessels." + id+"."+path);
         }
         bool update(std::string update);
+        bool update(nlohmann::json js);
         std::string readUpdate(std::istream& input);
         void SubscribeUpdate(std::function<void(std::string)> f);
     protected:

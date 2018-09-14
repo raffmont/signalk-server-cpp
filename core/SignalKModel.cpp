@@ -2,16 +2,12 @@
 // Created by Giuseppe Dragone
 //
 
-#include <map>
-#include <string>
-#include <sstream>
-#include <mpark/variant.hpp>
-#include <nlohmann/json.hpp>
+
 #include "ReaderHandler.h"
 #include "SignalKModel.h"
-#include <list>
-#include <tuple>
-#include <mutex>
+
+using json = nlohmann::json;
+
 //#include <mpm/eventbus.h>
 /*
 class SignalK::DataBase::UpdateBus
@@ -613,12 +609,24 @@ std::string SignalK::SignalKModel::getSelf()
         else return std::string();
     }
 }
+
 bool SignalK::SignalKModel::update(std::string update)
+{
+    try {
+        nlohmann::json js = nlohmann::json::parse(update);
+        bool fres = this->update(js);
+        return fres;
+    } catch (std::exception ex) {
+        return false;
+    }
+}
+
+bool SignalK::SignalKModel::update(nlohmann::json js)
 {
     try
     {
         bool changed = false;
-        nlohmann::json js = nlohmann::json::parse(update);
+
         std::string ctx;
         nlohmann::json jId = js["context"];
         bool fres = false;
@@ -777,3 +785,4 @@ std::ostream & SignalK::operator<<(std::ostream & os, const SignalKModel & dt)
     else dt.root->recursiveOut(os, "");
     return os;
 }
+
