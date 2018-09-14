@@ -13,6 +13,7 @@
 #include <marnav/nmea/nmea.hpp>
 #include <marnav/nmea/zda.hpp>
 #include <marnav/nmea/gll.hpp>
+#include <marnav/nmea/gga.hpp>
 #include <marnav/utils/unique.hpp>
 
 class NMEA0183DataProvider: public DataProvider {
@@ -21,6 +22,8 @@ public:
 
 private:
     bool replace(std::string& str, const std::string& from, const std::string& to);
+    std::string currentISO8601TimeUTC();
+    nlohmann::json makeUpdate(std::string talker, std::string id);
 };
 
 
