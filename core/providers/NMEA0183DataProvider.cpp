@@ -318,6 +318,18 @@ void NMEA0183DataProvider::parse(std::string line) {
                     utils::optional<double> speed = mwv->get_speed();
                     utils::optional<nmea::unit::velocity> speedUnit = mwv->get_speed_unit();
 
+                    // Convert 0-360 in -180,0,180
+                    if (angle.value()>180) {
+                        angle=180-angle.value();
+                    }
+
+                    // Convert speed in meters per seconds
+                    if (speedUnit.value()==nmea::unit::velocity::knot) {
+                        speed=knots2ms(speed.value());
+                    } else if (speedUnit.value()==nmea::unit::velocity::kmh) {
+                        speed=kmh2ms(speed.value());
+                    }
+
                     if (angleRef.value() == nmea::reference::RELATIVE) {
 
                         json updateAngleApparent = makeUpdate(nmea::to_string(sentence->get_talker()),
@@ -331,6 +343,18 @@ void NMEA0183DataProvider::parse(std::string line) {
                         };
 
                         updates.push_back(updateAngleApparent);
+
+                        json updateSpeedApparent = makeUpdate(nmea::to_string(sentence->get_talker()),
+                                                              nmea::to_string(sentence->id()));
+
+                        updateSpeedApparent["values"] = {
+                                {
+                                        {"path", "environment.wind.speedApparent"},
+                                        {"value", knots2ms(speed.value())}
+                                }
+                        };
+
+                        updates.push_back(updateSpeedApparent);
                     } else if (angleRef.value() == nmea::reference::TRUE) {
 
                         json updateAngleTrueWater = makeUpdate(nmea::to_string(sentence->get_talker()),
@@ -344,23 +368,114 @@ void NMEA0183DataProvider::parse(std::string line) {
                         };
 
                         updates.push_back(updateAngleTrueWater);
+
+                        json updateSpeedTrue = makeUpdate(nmea::to_string(sentence->get_talker()),
+                                                              nmea::to_string(sentence->id()));
+
+                        updateSpeedTrue["values"] = {
+                                {
+                                        {"path", "environment.wind.speedApparent"},
+                                        {"value", knots2ms(speed.value())}
+                                }
+                        };
+
+                        updates.push_back(updateSpeedTrue);
                     }
 
-                    if (speedUnit.value()==nmea::unit::velocity::knot) {
-                        speed=knots2ms(speed.value());
-                    } else if (speedUnit.value()==nmea::unit::velocity::kmh) {
-                        speed=kmh2ms(speed.value());
-                    }
+
 
                 } else if (sentence->id() == nmea::sentence_id::VHW) {
+                    auto vhw = nmea::sentence_cast<nmea::vhw>(sentence.get());
+
+                    utils::optional<double> heading = vhw->get_heading();
+                    utils::optional<nmea::reference > degreesMag=vhw->get_degrees_mag();
+                    utils::optional<nmea::reference > degreesTrue=vhw->get_degrees_true();
+                    utils::optional<double> speedKn = vhw->get_speed_knots();
+
+                    /*
+                    json updateHeadingTrue= makeUpdate(nmea::to_string(sentence->get_talker()),
+                                                            nmea::to_string(sentence->id()));
+
+                    updateHeadingTrue["values"] = {
+                            {
+                                    {"path", "navigation.headingTrue"},
+                                    {"value", deg2rad(heading.value())}
+                            }
+                    };
+
+                    updates.push_back(updateHeadingTrue);
+                     */
+
+                    json updateHeadingMagnetic = makeUpdate(nmea::to_string(sentence->get_talker()),
+                                                              nmea::to_string(sentence->id()));
+
+                    updateHeadingMagnetic["values"] = {
+                            {
+                                    {"path", "navigation.headingMagnetic"},
+                                    {"value", deg2rad(heading.value())}
+                            }
+                    };
+
+                    updates.push_back(updateHeadingMagnetic);
+
+
+                    json updateSpeedThroughWater = makeUpdate(nmea::to_string(sentence->get_talker()),
+                                                      nmea::to_string(sentence->id()));
+
+                    updateSpeedThroughWater["values"] = {
+                            {
+                                    {"path", "navigation.speedThroughWater"},
+                                    {"value", knots2ms(speedKn.value())}
+                            }
+                    };
+
+                    updates.push_back(updateSpeedThroughWater);
 
                 } else if (sentence->id() == nmea::sentence_id::VPW) {
+                    auto vpw = nmea::sentence_cast<nmea::vpw>(sentence.get());
+
+                    utils::optional<double> speedKn=vpw->get_speed_knots();
 
                 } else if (sentence->id() == nmea::sentence_id::VWR) {
+                    auto vwr = nmea::sentence_cast<nmea::vwr>(sentence.get());
 
-                } else if (sentence->id() == nmea::sentence_id::VWT) {
+                    utils::optional<double> speedKn=vwr->get_speed_knots();
+                    utils::optional<double> angle=vwr->get_angle();
+                    utils::optional<nmea::side > angleSide=vwr->get_angle_side();
 
-                } else if (sentence->id() == nmea::sentence_id::XTE) {
+                    if (angleSide.value()==nmea::side::left) {
+                        angle=-1*angle.value();
+                    }
+
+                    json updateAngleApparent = makeUpdate(nmea::to_string(sentence->get_talker()),
+                                                          nmea::to_string(sentence->id()));
+
+                    updateAngleApparent["values"] = {
+                            {
+                                    {"path", "environment.wind.angleApparent"},
+                                    {"value", deg2rad(angle.value())}
+                            }
+                    };
+
+                    updates.push_back(updateAngleApparent);
+
+                    json updateSpeedApparent = makeUpdate(nmea::to_string(sentence->get_talker()),
+                                                          nmea::to_string(sentence->id()));
+
+                    updateSpeedApparent["values"] = {
+                            {
+                                    {"path", "environment.wind.speedApparent"},
+                                    {"value", knots2ms(speedKn.value())}
+                            }
+                    };
+
+                    updates.push_back(updateSpeedApparent);
+
+
+                } /*else if (sentence->id() == nmea::sentence_id::VWT) {
+                    auto vwt = nmea::sentence_cast<nmea::vwt>(sentence.get());
+
+                }*/ else if (sentence->id() == nmea::sentence_id::XTE) {
 
                 } else if (sentence->id() == nmea::sentence_id::GSA) {
 

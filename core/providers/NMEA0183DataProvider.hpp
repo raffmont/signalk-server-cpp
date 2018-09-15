@@ -23,6 +23,10 @@
 #include <marnav/nmea/hdt.hpp>
 #include <marnav/nmea/rsa.hpp>
 #include <marnav/nmea/mwv.hpp>
+#include <marnav/nmea/vhw.hpp>
+#include <marnav/nmea/vpw.hpp>
+#include <marnav/nmea/vwr.hpp>
+//#include <marnav/nmea/vwt.hpp>
 #include <marnav/utils/unique.hpp>
 
 class NMEA0183DataProvider: public DataProvider {
