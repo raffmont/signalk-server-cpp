@@ -41,6 +41,16 @@ find_package( ZLIB REQUIRED )
 #        TIMEOUT 360
 #        )
 
+####
+
+ExternalProject_Add(cpphttplib
+        GIT_REPOSITORY https://github.com/yhirose/cpp-httplib.git
+        TIMEOUT 360
+        BUILD_IN_SOURCE 1
+        CONFIGURE_COMMAND echo Nothing
+        BUILD_COMMAND echo Nothing
+        INSTALL_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/httplib.h ${EXTERNAL_INSTALL_LOCATION}/include
+        )
 
 #### marnav
 
@@ -121,6 +131,7 @@ add_executable(
 
 # Expicit the dependencies
 #add_dependencies(${PROJECT_NAME} serial)
+add_dependencies(${PROJECT_NAME} cpphttplib)
 add_dependencies(${PROJECT_NAME} marnav)
 add_dependencies(${PROJECT_NAME} json)
 add_dependencies(${PROJECT_NAME} variant)
