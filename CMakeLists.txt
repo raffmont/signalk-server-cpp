@@ -49,7 +49,7 @@ ExternalProject_Add(cpphttplib
         BUILD_IN_SOURCE 1
         CONFIGURE_COMMAND echo Nothing
         BUILD_COMMAND echo Nothing
-        INSTALL_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/cpphttplib-prefix/src/cpphttplib/httplib.h ${EXTERNAL_INSTALL_LOCATION}/include
+        INSTALL_COMMAND cp ${CMAKE_BINARY_DIR}/cpphttplib-prefix/src/cpphttplib/httplib.h ${EXTERNAL_INSTALL_LOCATION}/include
         )
 
 #### marnav
@@ -126,7 +126,7 @@ add_executable(
         core/SignalKModel.h
         core/SignalKModel.cpp
         core/ReaderHandler.h
-        core/providers/DataProvider.cpp core/providers/DataProvider.hpp core/providers/WebSocketServerDataProvider.cpp core/providers/WebSocketServerDataProvider.hpp core/providers/WebSocketClientDataProvider.cpp core/providers/WebSocketClientDataProvider.hpp core/providers/NMEA0183DataProvider.cpp core/providers/NMEA0183DataProvider.hpp core/providers/SignalKDataProvider.cpp core/providers/SignalKDataProvider.hpp core/providers/FileNMEA0183DataProvider.cpp core/providers/FileNMEA0183DataProvider.hpp)
+        core/providers/DataProvider.cpp core/providers/DataProvider.hpp core/providers/WebSocketServerDataProvider.cpp core/providers/WebSocketServerDataProvider.hpp core/providers/WebSocketClientDataProvider.cpp core/providers/WebSocketClientDataProvider.hpp core/providers/NMEA0183DataProvider.cpp core/providers/NMEA0183DataProvider.hpp core/providers/SignalKDataProvider.cpp core/providers/SignalKDataProvider.hpp core/providers/FileNMEA0183DataProvider.cpp core/providers/FileNMEA0183DataProvider.hpp core/providers/WebAPIDataProvider.cpp core/providers/WebAPIDataProvider.hpp)
 
 
 # Expicit the dependencies
