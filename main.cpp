@@ -3,6 +3,7 @@
 #include "core/providers/WebSocketServerDataProvider.hpp"
 #include "core/providers/WebSocketClientDataProvider.hpp"
 #include "core/providers/FileNMEA0183DataProvider.hpp"
+#include "core/providers/WebAPIDataProvider.hpp"
 #include <uWS/uWS.h>
 #include <iostream>
 #include <fstream>
@@ -41,11 +42,13 @@ int main(int argc, char* argv[]) {
     WebSocketServerDataProvider p1("WebSocket Server",document,port);
     //WebSocketClientDataProvider p2("WebSocket Client", document,url);
     FileNMEA0183DataProvider p3("NMEA0183 file reader",document,filePath,millis);
+    WebAPIDataProvider p4("API",document,3000);
 
     std::vector<DataProvider *> dataProviders(std::thread::hardware_concurrency());
     dataProviders.push_back(&p1);
     //dataProviders.push_back(&p2);
     dataProviders.push_back(&p3);
+    dataProviders.push_back(&p4);
     cout << "------------------------\n";
 
     for (DataProvider *dataProvider :  dataProviders) {
