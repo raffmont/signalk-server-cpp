@@ -49,7 +49,7 @@ ExternalProject_Add(cpphttplib
         BUILD_IN_SOURCE 1
         CONFIGURE_COMMAND echo Nothing
         BUILD_COMMAND echo Nothing
-        INSTALL_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/httplib.h ${EXTERNAL_INSTALL_LOCATION}/include
+        INSTALL_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/cpphttplib-prefix/src/cpphttplib/httplib.h ${EXTERNAL_INSTALL_LOCATION}/include
         )
 
 #### marnav
