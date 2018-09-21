@@ -6,9 +6,10 @@
 
 
 
-WebSocketClientDataProvider::WebSocketClientDataProvider(std::string name,SignalK::SignalKModel *document, std::string url) {
+WebSocketClientDataProvider::WebSocketClientDataProvider(std::string id,SignalK::SignalKModel *document, std::string url) {
     std::cout << "WebSocketClientDataProvider::WebSocketClientDataProvider(name,document,url)\n";
-    this->name=name;
+    this->id=id;
+    this->type="providers/signalk/websocket/client";
     this->document=document;
     this->url=url;
 }

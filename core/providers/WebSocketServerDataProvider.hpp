@@ -14,7 +14,7 @@
 class WebSocketServerDataProvider : public SignalKDataProvider {
 public:
     virtual void run();
-    WebSocketServerDataProvider(std::string name,SignalK::SignalKModel *document, int port);
+    WebSocketServerDataProvider(std::string id,SignalK::SignalKModel *document, int port);
     virtual ~WebSocketServerDataProvider();
 
 private:

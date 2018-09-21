@@ -14,7 +14,7 @@
 class FileNMEA0183DataProvider: public NMEA0183DataProvider  {
 public:
     virtual void run();
-    FileNMEA0183DataProvider(std::string name, SignalK::SignalKModel *document, std::string filePath, int millis);
+    FileNMEA0183DataProvider(std::string id, SignalK::SignalKModel *document, std::string filePath, int millis);
     virtual ~FileNMEA0183DataProvider();
 
 private:

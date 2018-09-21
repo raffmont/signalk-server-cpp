@@ -6,9 +6,10 @@
 
 using namespace httplib;
 
-WebAPIDataProvider::WebAPIDataProvider(std::string name,SignalK::SignalKModel *document, int port) {
+WebAPIDataProvider::WebAPIDataProvider(std::string id,SignalK::SignalKModel *document, int port) {
     std::cout << "WebAPIDataProvider::WebAPIDataProvider(name,document,port)\n";
-    this->name=name;
+    this->type="providers/signalk/webapi/server";
+    this->id=id;
     this->document=document;
     this->port=port;
 }
@@ -36,6 +37,6 @@ void WebAPIDataProvider::run(){
         res.set_content(document->subtree(path), "application/json");
     });
 
-    svr.listen("localhost", port);
+    svr.listen(bind.data(), port);
 
 }

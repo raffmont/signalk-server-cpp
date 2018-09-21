@@ -17,15 +17,17 @@
 class DataProvider{
 public:
     DataProvider();
-    DataProvider(std::string name,SignalK::SignalKModel *document);
+    DataProvider(std::string id,SignalK::SignalKModel *document);
     virtual ~DataProvider();
     void start();
     void join();
-    std::string getName() { return name; }
+    std::string getType() { return type; }
+    std::string getId() { return id; }
     virtual void run();
 
 protected:
-    std::string name;
+    std::string id="";
+    std::string type="providers";
     std::thread t;
     bool threadStop = false;
     SignalK::SignalKModel *document=NULL;

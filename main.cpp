@@ -53,14 +53,14 @@ int main(int argc, char* argv[]) {
 
     for (DataProvider *dataProvider :  dataProviders) {
         if (dataProvider != NULL) {
-            std::cout << "Starting: " << dataProvider->getName() << "\n";
+            std::cout << "Starting: " << dataProvider->getId() << "\n";
             dataProvider->start();
         }
     }
 
     for (DataProvider *dataProvider :  dataProviders){
         if (dataProvider != NULL) {
-            std::cout << "Joining: " << dataProvider->getName() << "\n";
+            std::cout << "Joining: " << dataProvider->getId() << "\n";
             dataProvider->join();
         }
     }

@@ -11,8 +11,8 @@ DataProvider::DataProvider() : t() {
     std::cout << "DataProvider::DataProvider()\n";
 }
 
-DataProvider::DataProvider(std::string name,SignalK::SignalKModel *document) {
-    this->name=name;
+DataProvider::DataProvider(std::string id,SignalK::SignalKModel *document) {
+    this->id=id;
     this->document=document;
     std::cout << "DataProvider::DataProvider()\n";
 }
