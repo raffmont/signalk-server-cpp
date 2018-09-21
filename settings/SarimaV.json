@@ -1,0 +1,31 @@
+{
+  "vessel": {
+    "name": "Sarima V",
+    "brand": "XYachts",
+    "type": "22",
+    "uuid": "urn:mrn:signalk:uuid:705f5f1a-efaf-44aa-9cb8-a0fd6305567c",
+
+    "dimensions": {
+      "length": 10.72,
+      "width": 3.48,
+      "mast": 17,
+      "depthTransducer": 0.5,
+      "keel": 2.05
+    }
+  },
+
+  "interfaces": {},
+  "providers": [
+    { "id":"WebAPI","type":"providers/signalk/webapi/server", "options": {
+      "bind": "localhost",
+      "port": 3000}
+    },
+    { "id":"WebSocketServer","type":"providers/signalk/websocket/server","options":{
+      "port":3000}
+    },
+    { "id":"FileNMEA0193", "type":"providers/nmea0183/filestream", "options":{
+      "path":"data/SarimaV-20060114.nmea",
+      "millis":1000}
+    }
+  ]
+}
