@@ -126,7 +126,7 @@ add_executable(
         core/SignalKModel.h
         core/SignalKModel.cpp
         core/ReaderHandler.h
-        core/providers/DataProvider.cpp core/providers/DataProvider.hpp core/providers/WebSocketServerDataProvider.cpp core/providers/WebSocketServerDataProvider.hpp core/providers/WebSocketClientDataProvider.cpp core/providers/WebSocketClientDataProvider.hpp core/providers/NMEA0183DataProvider.cpp core/providers/NMEA0183DataProvider.hpp core/providers/SignalKDataProvider.cpp core/providers/SignalKDataProvider.hpp core/providers/FileNMEA0183DataProvider.cpp core/providers/FileNMEA0183DataProvider.hpp core/providers/WebAPIDataProvider.cpp core/providers/WebAPIDataProvider.hpp)
+        core/providers/DataProvider.cpp core/providers/DataProvider.hpp core/providers/WebSocketServerDataProvider.cpp core/providers/WebSocketServerDataProvider.hpp core/providers/WebSocketClientDataProvider.cpp core/providers/WebSocketClientDataProvider.hpp core/providers/NMEA0183DataProvider.cpp core/providers/NMEA0183DataProvider.hpp core/providers/SignalKDataProvider.cpp core/providers/SignalKDataProvider.hpp core/providers/FileNMEA0183DataProvider.cpp core/providers/FileNMEA0183DataProvider.hpp core/providers/WebAPIDataProvider.cpp core/providers/WebAPIDataProvider.hpp core/providers/DataProviders.cpp core/providers/DataProviders.hpp)
 
 
 # Expicit the dependencies
