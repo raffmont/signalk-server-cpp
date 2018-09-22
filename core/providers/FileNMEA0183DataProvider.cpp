@@ -13,6 +13,8 @@ FileNMEA0183DataProvider::FileNMEA0183DataProvider(std::string id,SignalK::Signa
     this->millis=millis;
 }
 
+FileNMEA0183DataProvider::FileNMEA0183DataProvider(std::string id, SignalK::SignalKModel *document, nlohmann::json options): FileNMEA0183DataProvider(id,document,options["path"],options["millis"]) {}
+
 void FileNMEA0183DataProvider::run(){
     std::cout << "FileNMEA0183DataProvider::run()\n";
     std::ifstream nmeaFile(filePath);

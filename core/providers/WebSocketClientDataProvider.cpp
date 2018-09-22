@@ -6,13 +6,17 @@
 
 
 
-WebSocketClientDataProvider::WebSocketClientDataProvider(std::string id,SignalK::SignalKModel *document, std::string url) {
+WebSocketClientDataProvider::WebSocketClientDataProvider(std::string id,SignalK::SignalKModel *document, int perms, std::string url) {
     std::cout << "WebSocketClientDataProvider::WebSocketClientDataProvider(name,document,url)\n";
     this->id=id;
     this->type="providers/signalk/websocket/client";
     this->document=document;
     this->url=url;
 }
+
+WebSocketClientDataProvider::WebSocketClientDataProvider(std::string id, SignalK::SignalKModel *document, nlohmann::json options): WebSocketClientDataProvider(id,document,options["perms"],options["url"]) {}
+
+
 WebSocketClientDataProvider::~WebSocketClientDataProvider() {
     std::cout << "WebSocketClientDataProvider::~WebSocketClientDataProvider()\n";
 }

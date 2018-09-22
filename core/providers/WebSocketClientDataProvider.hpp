@@ -13,7 +13,8 @@
 class WebSocketClientDataProvider : public SignalKDataProvider {
 public:
     virtual void run();
-    WebSocketClientDataProvider(std::string id, SignalK::SignalKModel *document, std::string url);
+    WebSocketClientDataProvider(std::string id, SignalK::SignalKModel *document, int perms, std::string url);
+    WebSocketClientDataProvider(std::string id, SignalK::SignalKModel *document, nlohmann::json options);
     virtual ~WebSocketClientDataProvider();
 
 private:

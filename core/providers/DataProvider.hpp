@@ -18,6 +18,7 @@ class DataProvider{
 public:
     DataProvider();
     DataProvider(std::string id,SignalK::SignalKModel *document);
+    DataProvider(std::string id,SignalK::SignalKModel *document, nlohmann::json options);
     virtual ~DataProvider();
     void start();
     void join();
@@ -33,21 +34,4 @@ protected:
     SignalK::SignalKModel *document=NULL;
 };
 
-
-
-/*
-
-
-class SerialNMEA0183DataProvider : public NMEA0183DataProvider {
-
-};
-
-class TcpIpNMEA0183DataProvider : public NMEA0183DataProvider {
-
-};
-
-class UdpNMEA0183DataProvider : public NMEA0183DataProvider {
-
-};
-*/
 #endif //SIGNALK_SERVER_CPP_DATAPROVIDER_HPP

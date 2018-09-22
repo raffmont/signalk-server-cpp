@@ -6,13 +6,18 @@
 
 using namespace httplib;
 
-WebAPIDataProvider::WebAPIDataProvider(std::string id,SignalK::SignalKModel *document, int port) {
+WebAPIDataProvider::WebAPIDataProvider(std::string id,SignalK::SignalKModel *document, std::string bind, int port) {
     std::cout << "WebAPIDataProvider::WebAPIDataProvider(name,document,port)\n";
     this->type="providers/signalk/webapi/server";
     this->id=id;
     this->document=document;
+    this->bind=bind;
     this->port=port;
 }
+
+WebAPIDataProvider::WebAPIDataProvider(std::string id, SignalK::SignalKModel *document, nlohmann::json options): WebAPIDataProvider(id,document,options["bind"],options["port"]) {}
+
+
 WebAPIDataProvider::~WebAPIDataProvider() {
     std::cout << "WebAPIDataProvider::~WebAPIDataProvider()\n";
 }
