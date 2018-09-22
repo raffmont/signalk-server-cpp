@@ -11,6 +11,7 @@
 #include <ctime>
 #include <chrono>
 #include <thread>
+#include <nlohmann/json.hpp>
 
 
 using namespace std;
@@ -22,6 +23,11 @@ int main(int argc, char* argv[]) {
         std::cerr << "Usage: " << argv[0] << "uuid nmeafile" << std::endl;
         return 1;
     }
+
+    std::ifstream t("settings.json");
+    std::string sSettings((std::istreambuf_iterator<char>(t)),
+                    std::istreambuf_iterator<char>());
+    nlohmann::json settings=nlohmann::json::parse(sSettings);
 
     std::string uuid=argv[1]; // "urn:mrn:signalk:uuid:705f5f1a-efaf-44aa-9cb8-a0fd6305567c"
     string filePath=argv[2]; //"/Users/raffaelemontella/Desktop/20060114.nmea"
