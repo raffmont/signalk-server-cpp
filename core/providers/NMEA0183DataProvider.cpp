@@ -26,7 +26,7 @@ void NMEA0183DataProvider::parse(std::string line) {
                 if (sentence->id() == nmea::sentence_id::ZDA) {
                     auto zda = nmea::sentence_cast<nmea::zda>(sentence.get());
                     utils::optional<nmea::time> utcTime = zda->get_time_utc();
-                    std::cout << "UTC:" << nmea::to_string(utcTime.value()) << "\n";
+                    //std::cout << "UTC:" << nmea::to_string(utcTime.value()) << "\n";
 
                 } else if (sentence->id() == nmea::sentence_id::GLL) {
                     auto gll = nmea::sentence_cast<nmea::gll>(sentence.get());
@@ -501,11 +501,11 @@ void NMEA0183DataProvider::parse(std::string line) {
                     //std::cout << delta.dump(4) << "\n";
                 }
             } catch (std::invalid_argument ex1) {
-                std::cout << "++++++++++++++++++++" << line << "\n" << ex1.what() << "\n";
+                spdlog::get("console")->error("{0}: {1}",ex1.what(),line);
             }
 
         } catch (nmea::unknown_sentence ex) {
-            std::cout <<  "nmea0183DataProvider::parse:" << line << " --- unknown!\n";
+            spdlog::get("console")->warn("Unknown: {0}",line);
         }
     }
 };

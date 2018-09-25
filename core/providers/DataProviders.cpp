@@ -6,29 +6,40 @@
 
 
 DataProviders::DataProviders() {
-    pItems=new std::vector<DataProvider *>(std::thread::hardware_concurrency());
+
 }
 
 DataProviders::DataProviders(SignalK::SignalKModel *pSignalKModel,nlohmann::json settings) {
+
+
+
+
+    pItems=new std::vector<DataProvider *>(std::thread::hardware_concurrency());
     for (nlohmann::json provider:settings["providers"]) {
         DataProvider *pDataProvider=NULL;
-        if (provider["type"]=="providers/nmea0183/filestream") {
-            pDataProvider=new FileNMEA0183DataProvider(provider["id"],pSignalKModel,provider["options"]);
-        } else if (provider["type"]=="providers/signalk/webapi/server") {
-            pDataProvider=new WebAPIDataProvider(provider["id"],pSignalKModel,provider["options"]);
-        } else if (provider["type"]=="providers/signalk/websocket/client") {
-            pDataProvider=new WebSocketClientDataProvider(provider["id"],pSignalKModel,provider["options"]);
-        }  else if (provider["type"]=="providers/signalk/websocket/server") {
-            pDataProvider=new WebSocketServerDataProvider(provider["id"],pSignalKModel,provider["options"]);
+
+        std::string id=provider["id"];
+        std::string type=provider["type"];
+        nlohmann::json options=provider["options"];
+
+        spdlog::get("console")->info("Data Provider: {0} {1}",id,type);
+        if (type=="providers/nmea0183/filestream") {
+            pDataProvider=new FileNMEA0183DataProvider(id,pSignalKModel,options);
+        } else if (type=="providers/signalk/webapi/server") {
+            pDataProvider=new WebAPIDataProvider(id,pSignalKModel,options);
+        } else if (type=="providers/signalk/websocket/client") {
+            pDataProvider=new WebSocketClientDataProvider(id,pSignalKModel,options);
+        }  else if (type=="providers/signalk/websocket/server") {
+            pDataProvider=new WebSocketServerDataProvider(id,pSignalKModel,options);
         }
         if (pDataProvider!=NULL) {
             pItems->push_back(pDataProvider);
         }
+
     }
 }
 
 DataProviders::~DataProviders() {
-    std::cout << "DataProvider::~DataProvider()\n";
 
     for (DataProvider *pDataProvider :  *pItems) {
         if (pDataProvider != NULL) {
@@ -42,14 +53,14 @@ DataProviders::~DataProviders() {
 void  DataProviders::run() {
     for (DataProvider *pDataProvider :  *pItems) {
         if (pDataProvider != NULL) {
-            std::cout << "Starting: " << pDataProvider->getId() << "\n";
+            spdlog::get("console")->info("Starting: {0}",pDataProvider->getId());
             pDataProvider->start();
         }
     }
 
     for (DataProvider *pDataProvider :  *pItems){
         if (pDataProvider != NULL) {
-            std::cout << "Joining: " << pDataProvider->getId() << "\n";
+            spdlog::get("console")->info("Joining: {0}",pDataProvider->getId());
             pDataProvider->join();
         }
     }

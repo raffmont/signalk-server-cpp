@@ -14,7 +14,7 @@
 class WebAPIDataProvider : public DataProvider{
 public:
     virtual void run();
-    WebAPIDataProvider(std::string id,SignalK::SignalKModel *document, std::string bind, int port);
+    WebAPIDataProvider(std::string id,SignalK::SignalKModel *document, std::string bind, int port, std::string root);
     WebAPIDataProvider(std::string id, SignalK::SignalKModel *document, nlohmann::json options);
     virtual ~WebAPIDataProvider();
 
@@ -23,6 +23,7 @@ private:
     std::string baseUrl="/signalk";
     std::string version="/v1";
     httplib::Server svr;
+    std::string root="www";
     std::string bind="localhost";
     int port=3000;
 };

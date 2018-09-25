@@ -13,17 +13,22 @@
 #include <chrono>
 #include <thread>
 #include <nlohmann/json.hpp>
+#include <spdlog/spdlog.h>
 
 
 using namespace std;
 
 
 int main(int argc, char* argv[]) {
+    auto console = spdlog::stdout_color_mt("console");
+    auto err_logger = spdlog::stderr_color_mt("stderr");
 
-    if (argc < 1) { // We expect 3 arguments: the program name, the source path and the destination path
-        std::cerr << "Usage: " << argv[0] << " settings.json" << std::endl;
+    if (argc < 1) {
+        err_logger->error("Usage: {0} settings.json",argv[0]);
         return 1;
     }
+
+    console->info("Welcome to DYNAMO/FairWomd SignalK Server!");
 
     std::ifstream t(argv[1]);
     std::string sSettings((std::istreambuf_iterator<char>(t)),

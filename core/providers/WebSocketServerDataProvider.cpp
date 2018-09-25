@@ -7,7 +7,6 @@
 
 
 WebSocketServerDataProvider::WebSocketServerDataProvider(std::string id,SignalK::SignalKModel *document,  std::string bind, int port) {
-    std::cout << "WebSocketServerDataProvider::WebSocketServerDataProvider(name,document,port)\n";
     this->id=id;
     this->type="providers/signalk/websocket/server";
     this->document=document;
@@ -17,12 +16,10 @@ WebSocketServerDataProvider::WebSocketServerDataProvider(std::string id,SignalK:
 WebSocketServerDataProvider::WebSocketServerDataProvider(std::string id, SignalK::SignalKModel *document, nlohmann::json options): WebSocketServerDataProvider(id,document,options["bind"],options["port"]) {}
 
 WebSocketServerDataProvider::~WebSocketServerDataProvider() {
-    std::cout << "WebSocketServerDataProvider::~WebSocketServerDataProvider()\n";
 }
 
 
 void WebSocketServerDataProvider::run(){
-    std::cout << "WebSocketServerDataProvider::run()\n";
 
 
     h.getDefaultGroup<uWS::CLIENT>().onMessage(
@@ -46,7 +43,7 @@ void WebSocketServerDataProvider::run(){
                 .broadcast(x.c_str(), x.size(), uWS::OpCode::TEXT);
     });
 
-    std::cout << "Listening on port " << port << "\n";
+    spdlog::get("console")->info("Listening: {0}:{1}",bind,port);
     h.listen(port);
     h.run();
 

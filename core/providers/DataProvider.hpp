@@ -9,6 +9,7 @@
 #include <thread>
 #include <uWS/Hub.h>
 #include <nlohmann/json.hpp>
+#include <spdlog/spdlog.h>
 
 
 #include "../SignalKModel.h"

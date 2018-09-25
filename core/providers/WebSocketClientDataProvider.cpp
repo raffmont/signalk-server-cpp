@@ -7,7 +7,6 @@
 
 
 WebSocketClientDataProvider::WebSocketClientDataProvider(std::string id,SignalK::SignalKModel *document, int perms, std::string url) {
-    std::cout << "WebSocketClientDataProvider::WebSocketClientDataProvider(name,document,url)\n";
     this->id=id;
     this->type="providers/signalk/websocket/client";
     this->document=document;
@@ -18,12 +17,10 @@ WebSocketClientDataProvider::WebSocketClientDataProvider(std::string id, SignalK
 
 
 WebSocketClientDataProvider::~WebSocketClientDataProvider() {
-    std::cout << "WebSocketClientDataProvider::~WebSocketClientDataProvider()\n";
 }
 
 
 void WebSocketClientDataProvider::run(){
-    std::cout << "WebSocketClientDataProvider::run()\n";
 
 
     h.getDefaultGroup<uWS::CLIENT>().onMessage(
@@ -44,6 +41,7 @@ void WebSocketClientDataProvider::run(){
 
     h.connect(url, nullptr);
     std::cout << "Connecte to " << url << "\n";
+    spdlog::get("console")->info("Connected to: {0}",url);
     h.run();
 
 }

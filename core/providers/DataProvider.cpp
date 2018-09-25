@@ -8,13 +8,13 @@
 
 
 DataProvider::DataProvider() : t() {
-    std::cout << "DataProvider::DataProvider()\n";
+
 }
 
 DataProvider::DataProvider(std::string id,SignalK::SignalKModel *document) {
     this->id=id;
     this->document=document;
-    std::cout << "DataProvider::DataProvider()\n";
+
 }
 
 DataProvider::DataProvider(std::string id,SignalK::SignalKModel *document, nlohmann::json options) {
@@ -22,7 +22,7 @@ DataProvider::DataProvider(std::string id,SignalK::SignalKModel *document, nlohm
 }
 
 DataProvider::~DataProvider() {
-    std::cout << "DataProvider::~DataProvider()\n";
+
 }
 
 void DataProvider::start() {

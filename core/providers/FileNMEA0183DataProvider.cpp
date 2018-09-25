@@ -5,7 +5,6 @@
 #include "FileNMEA0183DataProvider.hpp"
 
 FileNMEA0183DataProvider::FileNMEA0183DataProvider(std::string id,SignalK::SignalKModel *document, std::string filePath, int millis) {
-    std::cout << "FileNMEA0183DataProvider::FileNMEA0183DataProvider(" << document->getSelf() << "," << filePath <<"," << millis << ")\n";
     this->type="providers/nmea0183/filestream";
     this->id=id;
     this->document=document;
@@ -16,7 +15,7 @@ FileNMEA0183DataProvider::FileNMEA0183DataProvider(std::string id,SignalK::Signa
 FileNMEA0183DataProvider::FileNMEA0183DataProvider(std::string id, SignalK::SignalKModel *document, nlohmann::json options): FileNMEA0183DataProvider(id,document,options["path"],options["millis"]) {}
 
 void FileNMEA0183DataProvider::run(){
-    std::cout << "FileNMEA0183DataProvider::run()\n";
+
     std::ifstream nmeaFile(filePath);
     if(nmeaFile) {
 
@@ -26,10 +25,10 @@ void FileNMEA0183DataProvider::run(){
             parse(line);
             std::this_thread::sleep_for(std::chrono::milliseconds(millis));
         }
-        std::cout <<  "FileNMEA0183DataProvider::run:EOF\n";
+
     }
 }
 
 FileNMEA0183DataProvider::~FileNMEA0183DataProvider() {
-    std::cout << "FileNMEA0183DataProvider::~FileNMEA0183DataProvider()\n";
+
 }

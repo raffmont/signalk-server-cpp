@@ -6,25 +6,25 @@
 
 using namespace httplib;
 
-WebAPIDataProvider::WebAPIDataProvider(std::string id,SignalK::SignalKModel *document, std::string bind, int port) {
-    std::cout << "WebAPIDataProvider::WebAPIDataProvider(name,document,port)\n";
+WebAPIDataProvider::WebAPIDataProvider(std::string id,SignalK::SignalKModel *document, std::string bind, int port, std::string root) {
     this->type="providers/signalk/webapi/server";
     this->id=id;
     this->document=document;
     this->bind=bind;
     this->port=port;
+    this->root=root;
 }
 
-WebAPIDataProvider::WebAPIDataProvider(std::string id, SignalK::SignalKModel *document, nlohmann::json options): WebAPIDataProvider(id,document,options["bind"],options["port"]) {}
+WebAPIDataProvider::WebAPIDataProvider(std::string id, SignalK::SignalKModel *document, nlohmann::json options): WebAPIDataProvider(id,document,options["bind"],options["port"],options["root"]) {}
 
 
 WebAPIDataProvider::~WebAPIDataProvider() {
-    std::cout << "WebAPIDataProvider::~WebAPIDataProvider()\n";
+
 }
 
 
 void WebAPIDataProvider::run(){
-    std::cout << "WebAPIDataProvider::run()\n";
+
 
     svr.Get("/signalk/v1/api/stream", [](const Request& req, Response& res) {
         res.set_content("Upgrade Required", "text/plain");
@@ -42,6 +42,8 @@ void WebAPIDataProvider::run(){
         res.set_content(document->subtree(path), "application/json");
     });
 
+    svr.set_base_dir(root.c_str());
+    spdlog::get("console")->info("Listening: {0}:{1}",bind,port);
     svr.listen(bind.data(), port);
 
 }

@@ -21,6 +21,7 @@
 #include <chrono>
 #include <thread>
 #include <nlohmann/json.hpp>
+#include <spdlog/spdlog.h>
 
 class DataProviders {
 public:
