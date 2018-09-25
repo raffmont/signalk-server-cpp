@@ -41,7 +41,15 @@ find_package( ZLIB REQUIRED )
 #        TIMEOUT 360
 #        )
 
-####
+#### spdlog
+
+ExternalProject_Add(spdlog
+        GIT_REPOSITORY https://github.com/gabime/spdlog.git
+        TIMEOUT 360
+        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_LOCATION}
+        )
+
+#### cpphttplib
 
 ExternalProject_Add(cpphttplib
         GIT_REPOSITORY https://github.com/yhirose/cpp-httplib.git
@@ -131,6 +139,7 @@ add_executable(
 
 # Expicit the dependencies
 #add_dependencies(${PROJECT_NAME} serial)
+add_dependencies(${PROJECT_NAME} spdlog)
 add_dependencies(${PROJECT_NAME} cpphttplib)
 add_dependencies(${PROJECT_NAME} marnav)
 add_dependencies(${PROJECT_NAME} json)
