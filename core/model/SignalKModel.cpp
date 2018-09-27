@@ -6,6 +6,7 @@
 #include "ReaderHandler.h"
 #include "SignalKModel.h"
 
+
 using json = nlohmann::json;
 
 //#include <mpm/eventbus.h>
@@ -589,6 +590,39 @@ std::string SignalK::SignalKModel::subtree(std::string path)
     return fres;
 
 }
+
+nlohmann::json SignalK::SignalKModel::getHello() {
+    nlohmann::json hello={
+        {"version", getVersion()},
+        {"timestamp", currentISO8601TimeUTC()},
+        {"self", getSelf()}
+    };
+    return hello;
+}
+
+nlohmann::json SignalK::SignalKModel::getSignalK(std::string bind, int port) {
+    nlohmann::json signalk={
+        {
+            "endpoints",
+                {"v1",
+                    {
+                            {"version", "1.0.0",
+                                    {"signalk-http", "http://localhost:3000/signalk/v1/api/"},
+                                    {"signalk-ws", "ws://localhost:3000/signalk/v1/stream"}
+                            }
+                    }
+                }
+        },
+        {
+            "servers", {
+                 {"id", "signalk-servers-cpp"},
+                 {"version", "0.1.0"}
+            }
+        }
+    };
+    return signalk;
+}
+
 std::string SignalK::SignalKModel::getVersion()
 {
     if (root == nullptr) return std::string();
@@ -786,3 +820,15 @@ std::ostream & SignalK::operator<<(std::ostream & os, const SignalKModel & dt)
     return os;
 }
 
+
+/**
+ * Generate a UTC ISO8601-formatted timestamp
+ * and return as std::string
+ */
+std::string SignalK::SignalKModel::currentISO8601TimeUTC() {
+    auto now = std::chrono::system_clock::now();
+    auto itt = std::chrono::system_clock::to_time_t(now);
+    std::ostringstream ss;
+    ss << std::put_time(gmtime(&itt), "%FT%TZ");
+    return ss.str();
+}

@@ -14,9 +14,12 @@
 #include <list>
 #include <tuple>
 #include <mutex>
+#include <iomanip>
 
 #include <mpark/variant.hpp>
 #include <nlohmann/json.hpp>
+
+
 
 namespace SignalK {
     
@@ -42,6 +45,8 @@ namespace SignalK {
         std::string subtree(std::string path);
         std::string getVersion();
         std::string getSelf();
+        nlohmann::json getHello();
+        nlohmann::json getSignalK(std::string bind, int port);
         std::string getSource(std::string id) {
             return subtree("sources." + id);
         }
@@ -52,6 +57,7 @@ namespace SignalK {
         bool update(nlohmann::json js);
         std::string readUpdate(std::istream& input);
         void SubscribeUpdate(std::function<void(std::string)> f);
+        std::string currentISO8601TimeUTC();
     protected:
         friend std::ostream& operator<< (std::ostream& os, const SignalKModel& dt);
         class Node;
