@@ -17,19 +17,6 @@
   "interfaces": {},
 
   "providers": [
-    { "id":"WebAPI","type":"providers/signalk/webapi/server",
-      "options": {
-        "bind": "localhost",
-        "port": 3000,
-        "root" : "/Users/raffaelemontella/CLionProjects/signalk-server-cpp/www"
-      }
-    },
-    { "id":"WebSocketServer","type":"providers/signalk/websocket/server",
-      "options":{
-        "bind": "localhost",
-        "port":3000
-      }
-    },
     { "id":"FileNMEA0193", "type":"providers/nmea0183/filestream",
       "options":{
         "path":"/Users/raffaelemontella/CLionProjects/signalk-server-cpp/samples/SarimaV-20060114.nmea",

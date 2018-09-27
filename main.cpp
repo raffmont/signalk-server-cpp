@@ -1,20 +1,20 @@
 #include <cstdio>
-#include "core/SignalKModel.h"
-#include "core/providers/WebSocketServerDataProvider.hpp"
-#include "core/providers/WebSocketClientDataProvider.hpp"
-#include "core/providers/FileNMEA0183DataProvider.hpp"
-#include "core/providers/WebAPIDataProvider.hpp"
-#include "core/providers/DataProviders.hpp"
-#include <uWS/uWS.h>
 #include <iostream>
 #include <fstream>
 #include <streambuf>
 #include <ctime>
 #include <chrono>
 #include <thread>
+
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
+#include <uWS/uWS.h>
 
+#include "core/model/SignalKModel.h"
+#include "core/servers/WebSocketDataServer.hpp"
+#include "core/providers/WebSocketClientDataProvider.hpp"
+#include "core/providers/FileNMEA0183DataProvider.hpp"
+#include "core/providers/DataProviders.hpp"
 
 using namespace std;
 
@@ -38,6 +38,9 @@ int main(int argc, char* argv[]) {
     std::string uuid=settings["vessel"]["uuid"];
 
     SignalK::SignalKModel *pSignalKModel=new SignalK::SignalKModel(uuid, "v1.0.0");
+
+    WebSocketDataServer *pWebSocketServer = new WebSocketDataServer(pSignalKModel,"localhost",3000,"/Users/raffaelemontella/CLionProjects/signalk-server-cpp/www/");
+    pWebSocketServer->start();
 
     DataProviders dataProviders(pSignalKModel,settings);
     dataProviders.run();

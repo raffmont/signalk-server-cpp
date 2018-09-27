@@ -131,10 +131,26 @@ endif()
 add_executable(
         ${PROJECT_NAME}
         main.cpp
-        core/SignalKModel.h
-        core/SignalKModel.cpp
-        core/ReaderHandler.h
-        core/providers/DataProvider.cpp core/providers/DataProvider.hpp core/providers/WebSocketServerDataProvider.cpp core/providers/WebSocketServerDataProvider.hpp core/providers/WebSocketClientDataProvider.cpp core/providers/WebSocketClientDataProvider.hpp core/providers/NMEA0183DataProvider.cpp core/providers/NMEA0183DataProvider.hpp core/providers/SignalKDataProvider.cpp core/providers/SignalKDataProvider.hpp core/providers/FileNMEA0183DataProvider.cpp core/providers/FileNMEA0183DataProvider.hpp core/providers/WebAPIDataProvider.cpp core/providers/WebAPIDataProvider.hpp core/providers/DataProviders.cpp core/providers/DataProviders.hpp)
+        core/model/SignalKModel.h
+        core/model/SignalKModel.cpp
+        core/model/ReaderHandler.h
+        core/providers/DataProvider.cpp
+        core/providers/DataProvider.hpp
+        core/servers/WebSocketDataServer.cpp
+        core/servers/WebSocketDataServer.hpp
+        core/providers/WebSocketClientDataProvider.cpp
+        core/providers/WebSocketClientDataProvider.hpp
+        core/providers/NMEA0183DataProvider.cpp
+        core/providers/NMEA0183DataProvider.hpp
+        core/providers/SignalKDataProvider.cpp
+        core/providers/SignalKDataProvider.hpp
+        core/providers/FileNMEA0183DataProvider.cpp
+        core/providers/FileNMEA0183DataProvider.hpp
+        core/providers/DataProviders.cpp
+        core/providers/DataProviders.hpp
+        core/servers/DataServer.cpp
+        core/servers/DataServer.hpp
+        core/servers/SignalKDataServer.cpp core/servers/SignalKDataServer.hpp)
 
 
 # Expicit the dependencies
