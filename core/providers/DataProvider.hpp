@@ -5,21 +5,19 @@
 #ifndef SIGNALK_SERVER_CPP_DATAPROVIDER_HPP
 #define SIGNALK_SERVER_CPP_DATAPROVIDER_HPP
 
-#include <iostream>
+
+#include <string>
 #include <thread>
-#include <uWS/Hub.h>
-#include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
-
-
-#include "../SignalKModel.h"
+#include "../model/SignalKModel.h"
 
 
 class DataProvider{
+
 public:
     DataProvider();
-    DataProvider(std::string id,SignalK::SignalKModel *document);
-    DataProvider(std::string id,SignalK::SignalKModel *document, nlohmann::json options);
+    DataProvider(std::string id,SignalK::SignalKModel *pSignalKModel);
+    DataProvider(std::string id,SignalK::SignalKModel *pSignalKModel, nlohmann::json options);
     virtual ~DataProvider();
     void start();
     void join();
@@ -27,12 +25,13 @@ public:
     std::string getId() { return id; }
     virtual void run();
 
+
 protected:
     std::string id="";
     std::string type="providers";
     std::thread t;
     bool threadStop = false;
-    SignalK::SignalKModel *document=NULL;
+    SignalK::SignalKModel *pSignalKModel=NULL;
 };
 
 #endif //SIGNALK_SERVER_CPP_DATAPROVIDER_HPP

@@ -3,17 +3,18 @@
 //
 
 
-#include "DataProvider.hpp"
 
+#include "DataProvider.hpp"
+#include <thread>
 
 
 DataProvider::DataProvider() : t() {
 
 }
 
-DataProvider::DataProvider(std::string id,SignalK::SignalKModel *document) {
+DataProvider::DataProvider(std::string id,SignalK::SignalKModel *pSignalKModel) {
     this->id=id;
-    this->document=document;
+    this->pSignalKModel=pSignalKModel;
 
 }
 
@@ -35,6 +36,7 @@ void DataProvider::join() {
 
 void DataProvider::run(){
 }
+
 
 
 

@@ -5,23 +5,14 @@
 #ifndef SIGNALK_SERVER_CPP_DATAPROVIDERS_HPP
 #define SIGNALK_SERVER_CPP_DATAPROVIDERS_HPP
 
-
-#include <cstdio>
-#include "../SignalKModel.h"
-#include "WebSocketServerDataProvider.hpp"
-#include "WebSocketClientDataProvider.hpp"
-#include "FileNMEA0183DataProvider.hpp"
-#include "WebAPIDataProvider.hpp"
-#include "DataProviders.hpp"
-#include <uWS/uWS.h>
-#include <iostream>
-#include <fstream>
-#include <streambuf>
-#include <ctime>
-#include <chrono>
 #include <thread>
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
+
+#include "../model/SignalKModel.h"
+#include "DataProvider.hpp"
+
+
 
 class DataProviders {
 public:

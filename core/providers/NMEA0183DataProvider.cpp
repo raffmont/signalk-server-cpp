@@ -11,7 +11,7 @@ using json = nlohmann::json;
 
 void NMEA0183DataProvider::parse(std::string line) {
 
-    if (document!=NULL && line.empty()==false) {
+    if (pSignalKModel!=NULL && line.empty()==false) {
         replace(line, "\n", "");
         replace(line, "\r", "");
         //std::cout <<  "NMEA0183DataProvider::parse:" << line << "\n";
@@ -492,11 +492,11 @@ void NMEA0183DataProvider::parse(std::string line) {
                 if (updates.size() > 0) {
 
 
-                    std::string vesselSelf = "vessels." + document->getSelf();
+                    std::string vesselSelf = "vessels." + pSignalKModel->getSelf();
                     json delta = {{"context", vesselSelf},
                                   {"updates", updates}};
 
-                    document->update(delta);
+                    pSignalKModel->update(delta);
 
                     //std::cout << delta.dump(4) << "\n";
                 }
@@ -505,7 +505,7 @@ void NMEA0183DataProvider::parse(std::string line) {
             }
 
         } catch (nmea::unknown_sentence ex) {
-            spdlog::get("console")->warn("Unknown: {0}",line);
+            //spdlog::get("console")->warn("Unknown: {0}",line);
         }
     }
 };
@@ -518,17 +518,7 @@ bool NMEA0183DataProvider::replace(std::string& str, const std::string& from, co
     return true;
 }
 
-/**
- * Generate a UTC ISO8601-formatted timestamp
- * and return as std::string
- */
-std::string NMEA0183DataProvider::currentISO8601TimeUTC() {
-    auto now = std::chrono::system_clock::now();
-    auto itt = std::chrono::system_clock::to_time_t(now);
-    std::ostringstream ss;
-    ss << std::put_time(gmtime(&itt), "%FT%TZ");
-    return ss.str();
-}
+
 
 nlohmann::json NMEA0183DataProvider::makeUpdate(std::string talker, std::string id) {
     json update  = {
@@ -539,7 +529,7 @@ nlohmann::json NMEA0183DataProvider::makeUpdate(std::string talker, std::string 
                                   {"label", "nmeaFromFile"}
                           }
             },
-            {"timestamp", currentISO8601TimeUTC()}
+            {"timestamp", pSignalKModel->currentISO8601TimeUTC()}
         };
     return update;
 }

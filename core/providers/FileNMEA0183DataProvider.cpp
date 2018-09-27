@@ -4,10 +4,10 @@
 
 #include "FileNMEA0183DataProvider.hpp"
 
-FileNMEA0183DataProvider::FileNMEA0183DataProvider(std::string id,SignalK::SignalKModel *document, std::string filePath, int millis) {
+FileNMEA0183DataProvider::FileNMEA0183DataProvider(std::string id,SignalK::SignalKModel *pSignalKModel, std::string filePath, int millis) {
     this->type="providers/nmea0183/filestream";
     this->id=id;
-    this->document=document;
+    this->pSignalKModel=pSignalKModel;
     this->filePath=filePath;
     this->millis=millis;
 }

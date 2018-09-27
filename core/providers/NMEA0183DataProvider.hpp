@@ -35,7 +35,6 @@ public:
 
 private:
     bool replace(std::string& str, const std::string& from, const std::string& to);
-    std::string currentISO8601TimeUTC();
     nlohmann::json makeUpdate(std::string talker, std::string id);
     double PI=3.141592653589793238463L;
     double D2R=0.0174533;
