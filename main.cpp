@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
 
     std::string uuid=settings["vessel"]["uuid"];
 
-    SignalK::SignalKModel *pSignalKModel=new SignalK::SignalKModel(uuid, "v1.0.0");
+    SignalK::SignalKModel *pSignalKModel=new SignalK::SignalKModel(uuid, "v0.1.0");
 
     WebSocketDataServer *pWebSocketServer = new WebSocketDataServer(pSignalKModel,"localhost",3000,"/Users/raffaelemontella/CLionProjects/signalk-server-cpp/www/");
     pWebSocketServer->start();
