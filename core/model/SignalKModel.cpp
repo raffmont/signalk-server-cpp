@@ -566,9 +566,9 @@ nlohmann::json SignalK::SignalKModel::getSignalK(std::string bind, int port) {
                 }
         },
         {
-            "servers", {
+            "server", {
                  {"id", "signalk-servers-cpp"},
-                 {"version", "0.1.0"}
+                 {"version", getVersion()}
             }
         }
     };
