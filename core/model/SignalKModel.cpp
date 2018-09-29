@@ -9,54 +9,6 @@
 
 using json = nlohmann::json;
 
-//#include <mpm/eventbus.h>
-/*
-class SignalK::DataBase::UpdateBus
-{
-	public:
-		void Subscribe(std::function<void(std::string)> f)
-		{
-			auto s=ebus.subscribe<std::string,  std::function<void (const std::string&)>>(
-				[f](const std::string& mo) noexcept {
-				try {
-					f(mo);
-				}
-				catch (...) {
-
-				}
-			}
-			);
-			subscriptions.push_back(s);
-		}
-		void Publish(std::string update)
-		{
-			ebus.publish(update);
-		}
-		~UpdateBus()
-		{
-			for (auto s : subscriptions) ebus.unsubscribe(s);
-		}
-	private:
-		mpm::eventbus ebus;
-		std::vector<mpm::cookie> subscriptions;
-};
-*/
-class SignalK::SignalKModel::UpdateBus
-{
-public:
-    void Subscribe(std::function<void(std::string)> f)
-    {
-        subscriptions.push_back(f);
-    }
-    void Publish(std::string update)
-    {
-        for (auto f : subscriptions)
-            f(update);
-    }
-
-private:
-    std::vector<std::function<void(std::string)>> subscriptions;
-};
 
 class SignalK::SignalKModel::Node
 {
@@ -515,7 +467,7 @@ const std::string SignalK::SignalKModel::Node::valueName("value");
 SignalK::SignalKModel::SignalKModel()
 {
     root = nullptr;
-    bus = new SignalK::SignalKModel::UpdateBus();
+    bus = new UpdateBus();
 }
 SignalK::SignalKModel::SignalKModel(const std::string & self, const std::string & version)
 {
@@ -524,14 +476,14 @@ SignalK::SignalKModel::SignalKModel(const std::string & self, const std::string 
     root->addChild("vessels", new Node());
     root->addChild("sources", new Node());
     root->addChild("version", new Node(version));
-    bus = new SignalK::SignalKModel::UpdateBus();
+    bus = new SignalK::UpdateBus();
 }
 SignalK::SignalKModel::SignalKModel(const SignalK::SignalKModel& other)
         : SignalK::SignalKModel::SignalKModel()
 {
     if (other.root != nullptr)
         root = new Node(*(other.root));
-    bus = new SignalK::SignalKModel::UpdateBus();
+    bus = new SignalK::UpdateBus();
 }
 SignalK::SignalKModel::SignalKModel(SignalK::SignalKModel&& other)
         : SignalK::SignalKModel::SignalKModel()
@@ -541,13 +493,13 @@ SignalK::SignalKModel::SignalKModel(SignalK::SignalKModel&& other)
         root = other.root;
         other.root = nullptr;
     }
-    bus = new SignalK::SignalKModel::UpdateBus();
+    bus = new SignalK::UpdateBus();
 }
 SignalK::SignalKModel::SignalKModel(const std::string& json, bool flatten, bool strict)
         : SignalK::SignalKModel::SignalKModel()
 {
     load(json, flatten, strict);
-    bus = new SignalK::SignalKModel::UpdateBus();
+    bus = new SignalK::UpdateBus();
 }
 
 SignalK::SignalKModel::~SignalKModel()
@@ -782,7 +734,9 @@ bool SignalK::SignalKModel::update(nlohmann::json js)
         if (changed ) {
             std::reverse(allUpdatePos.begin(), allUpdatePos.end());
             for (auto &upos : allUpdatePos) js["updates"].erase(upos);
-            bus->Publish(js.dump());
+            //bus->Publish(js.dump());
+            bus->publish(js);
+
         }
         return fres;
     }
@@ -808,10 +762,6 @@ std::string SignalK::SignalKModel::readUpdate(std::istream & input)
     }
 }
 
-void SignalK::SignalKModel::SubscribeUpdate(std::function<void(std::string)> f)
-{
-    bus->Subscribe(f);
-}
 
 std::ostream & SignalK::operator<<(std::ostream & os, const SignalKModel & dt)
 {

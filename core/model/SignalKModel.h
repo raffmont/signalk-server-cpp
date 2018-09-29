@@ -16,9 +16,11 @@
 #include <mutex>
 #include <iomanip>
 
+#include <spdlog/spdlog.h>
 #include <mpark/variant.hpp>
 #include <nlohmann/json.hpp>
 
+#include "UpdateBus.hpp"
 
 
 namespace SignalK {
@@ -36,7 +38,7 @@ namespace SignalK {
         ~SignalKModel();
         SignalKModel& operator=(SignalKModel other) {
             this->root=other.root;
-            this->bus=other.bus;
+            //this->bus=other.bus;
             return *this;
         }
         void load(const std::string& json, bool flatten=false, bool strict = false);
@@ -56,14 +58,14 @@ namespace SignalK {
         bool update(std::string update);
         bool update(nlohmann::json js);
         std::string readUpdate(std::istream& input);
-        void SubscribeUpdate(std::function<void(std::string)> f);
         std::string currentISO8601TimeUTC();
+        UpdateBus *getUpdateBus() { return bus; }
     protected:
         friend std::ostream& operator<< (std::ostream& os, const SignalKModel& dt);
         class Node;
         Node* root;
-        class UpdateBus;
         UpdateBus * bus;
+
     };
     std::ostream& operator<< (std::ostream& os, const SignalKModel& dt);
 }
