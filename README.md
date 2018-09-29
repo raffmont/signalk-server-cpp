@@ -17,7 +17,34 @@ Where:
     
 When the signalk-server-cpp is running, read the signalk-server-node websocket:
 
-wscat ws://localhost:3000/signalk/v1/stream?subscribe=all
+    wscat ws://localhost:3000/signalk/v1/stream?subscribe=all
+
+The web interface is working at http://localhost:3000
+The SignalK web API are available on http://localhost:3000/signalk :
+
+    {
+      "endpoints": [
+        "v1",
+        [
+          [
+            "version",
+            "1.0.0",
+            [
+              "signalk-http",
+              "http://localhost:3000/signalk/v1/api/"
+            ],
+            [
+              "signalk-ws",
+              "ws://localhost:3000/signalk/v1/stream"
+            ]
+          ]
+        ]
+      ],
+      "servers": {
+        "id": "signalk-server-cpp",
+        "version": "0.1.0"
+      }
+    }
 
 Example of configuration file:
 
@@ -40,18 +67,6 @@ Example of configuration file:
       "interfaces": {},
     
       "providers": [
-        { "id":"WebAPI","type":"providers/signalk/webapi/server",
-          "options": {
-            "bind": "localhost",
-            "port": 3000
-          }
-        },
-        { "id":"WebSocketServer","type":"providers/signalk/websocket/server",
-          "options":{
-            "bind": "localhost",
-            "port":3000
-          }
-        },
         { "id":"FileNMEA0193", "type":"providers/nmea0183/filestream",
           "options":{
             "path":"/Users/raffaelemontella/CLionProjects/signalk-server-cpp/samples/SarimaV-20060114.nmea",
