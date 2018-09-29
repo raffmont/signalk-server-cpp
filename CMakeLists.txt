@@ -36,7 +36,7 @@ find_package( ZLIB REQUIRED )
 #### serial
 
 #ExternalProject_Add(serial
-#        GIT_REPOSITORY https://github.com/wjwwood/serial.git
+#        GIT_REPOSITORY https://github.com/raffmont/serial.git
 #        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_LOCATION}
 #        TIMEOUT 360
 #        )
@@ -51,14 +51,14 @@ ExternalProject_Add(spdlog
 
 #### cpphttplib
 
-ExternalProject_Add(cpphttplib
-        GIT_REPOSITORY https://github.com/yhirose/cpp-httplib.git
-        TIMEOUT 360
-        BUILD_IN_SOURCE 1
-        CONFIGURE_COMMAND echo Nothing
-        BUILD_COMMAND echo Nothing
-        INSTALL_COMMAND cp ${CMAKE_BINARY_DIR}/cpphttplib-prefix/src/cpphttplib/httplib.h ${EXTERNAL_INSTALL_LOCATION}/include
-        )
+#ExternalProject_Add(cpphttplib
+#        GIT_REPOSITORY https://github.com/yhirose/cpp-httplib.git
+#        TIMEOUT 360
+#        BUILD_IN_SOURCE 1
+#        CONFIGURE_COMMAND echo Nothing
+#        BUILD_COMMAND echo Nothing
+#        INSTALL_COMMAND cp ${CMAKE_BINARY_DIR}/cpphttplib-prefix/src/cpphttplib/httplib.h ${EXTERNAL_INSTALL_LOCATION}/include
+#        )
 
 #### marnav
 
@@ -150,13 +150,13 @@ add_executable(
         core/providers/DataProviders.hpp
         core/servers/DataServer.cpp
         core/servers/DataServer.hpp
-        core/servers/SignalKDataServer.cpp core/servers/SignalKDataServer.hpp)
+        core/servers/SignalKDataServer.cpp core/servers/SignalKDataServer.hpp core/model/UpdateBus.cpp core/model/UpdateBus.hpp)
 
 
 # Expicit the dependencies
 #add_dependencies(${PROJECT_NAME} serial)
 add_dependencies(${PROJECT_NAME} spdlog)
-add_dependencies(${PROJECT_NAME} cpphttplib)
+#add_dependencies(${PROJECT_NAME} cpphttplib)
 add_dependencies(${PROJECT_NAME} marnav)
 add_dependencies(${PROJECT_NAME} json)
 add_dependencies(${PROJECT_NAME} variant)
