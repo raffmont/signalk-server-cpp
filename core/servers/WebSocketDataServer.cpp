@@ -28,7 +28,7 @@ void WebSocketDataServer::run(){
         spdlog::get("console")->info("Request: {0}",url);
         if (url == SIGNALK_V1_STREAM) {
 
-        } else if (url.find(SIGNALK_V1_API)==0) {
+        } else if (url.find(SIGNALK_V1_API)!=std::string::npos) {
             std::string path=url;
             path.erase(0,SIGNALK_V1_API.length());
             std::replace( path.begin(), path.end(), '/', '.');
@@ -41,8 +41,6 @@ void WebSocketDataServer::run(){
             res->end((char *) signalk.c_str(), signalk.length());
             return;
         } else {
-            // why would the client send a new request at this point?
-            //res->getHttpSocket()->terminate();
             std::string path=url;
             if (path=="/") {
                 path="index.html";
@@ -50,15 +48,7 @@ void WebSocketDataServer::run(){
             std::ifstream t(root+"/"+path);
             std::string document((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
             res->end((char *) document.c_str(), document.length());
-            /*
-            if (hasEnding(path,".html")) {
-                std::string document((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
-                res->end((char *) document.c_str(), document.length());
-            } else if (hasEnding(path,".png")) {
-                std::string document((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
-                res->end((char *) document.c_str(), document.length());
-            }
-            */
+
             return;
         }
     });
@@ -67,24 +57,83 @@ void WebSocketDataServer::run(){
             [this](uWS::WebSocket<uWS::SERVER> *ws, char *message, size_t length, uWS::OpCode x) {
                 std::string msg(message, length);
                 spdlog::get("console")->info("{0} {1} - Message",ws->getAddress().address,ws->getAddress().port);
+
+                std::string sMessage=std::string(message,length);
+                nlohmann::json jMessage=nlohmann::json::parse(sMessage);
+                if (jMessage["context"] && jMessage["subscribe"]) {
+                    std::vector<nlohmann::json*> *subscriptions = (std::vector<nlohmann::json*> *) (ws->getUserData());
+                    nlohmann::json *subscription = new nlohmann::json(sMessage);
+
+                    pSignalKModel->getUpdateBus()->subscribe(*subscription, [ws](nlohmann::json update) {
+                        spdlog::get("console")->debug("{0} - onUpdate", update.dump());
+                        std::string updateString = update.dump();
+                        ws->send(updateString.c_str(), updateString.size(), uWS::OpCode::TEXT);
+                    });
+
+                    subscriptions->push_back(subscription);
+                }
             });
 
     h.onConnection([this](uWS::WebSocket<uWS::SERVER> *ws, uWS::HttpRequest httpRequest) {
-        spdlog::get("console")->info("{0} {1} - Connected",ws->getAddress().address,ws->getAddress().port);
-        std::string hello = pSignalKModel->getHello().dump(2);
-        ws->send(hello.c_str(), hello.size(), uWS::OpCode::TEXT);
+        std::string url = httpRequest.getUrl().toString();
+        spdlog::get("console")->info("{0} {1} {2} - Connected",ws->getAddress().address,ws->getAddress().port, url);
+
+        if (url.find(SIGNALK_V1_STREAM)!=std::string::npos) {
+            std::string hello = pSignalKModel->getHello().dump();
+            ws->send(hello.c_str(), hello.size(), uWS::OpCode::TEXT);
+            std::vector<nlohmann::json*> *subscriptions=new std::vector<nlohmann::json*>();
+            ws->setUserData(subscriptions);
+
+            nlohmann::json *subscription= nullptr;
+            if (url.find("subscribe=all")!=std::string::npos) {
+                subscription= new nlohmann::json(
+                    {
+                         { "context", "*"},
+                         { "subscribe", { "*" }}
+                    }
+                );
+
+            } else
+            if (url.find("subscribe=none")!=std::string::npos) {
+
+            } else {
+                subscription = new nlohmann::json(
+                    {
+                            {"context",   "vessels." + pSignalKModel->getSelf()},
+                            {"subscribe", {"*"}}
+                    }
+                );
+            }
+
+
+            if (subscription!= nullptr) {
+                pSignalKModel->getUpdateBus()->subscribe(*subscription, [ws](nlohmann::json update) {
+                    spdlog::get("console")->debug("{0} - onUpdate", update.dump());
+                    std::string updateString = update.dump();
+                    ws->send(updateString.c_str(), updateString.size(), uWS::OpCode::TEXT);
+                });
+
+                subscriptions->push_back(subscription);
+                spdlog::get("console")->info("subscription: {0}",subscription->dump(2));
+            }
+
+        } else {
+            ws->terminate();
+        }
     });
 
     h.onDisconnection([this](uWS::WebSocket<uWS::SERVER> *ws, int code, char *message, size_t length) {
-        //h.getDefaultGroup<uWS::SERVER>().close();
+        std::vector<nlohmann::json*> *subscriptions = (std::vector<nlohmann::json*> *) (ws->getUserData());
+        std::for_each(subscriptions->begin(),subscriptions->end(),[this](nlohmann::json *subscription) {
+            pSignalKModel->getUpdateBus()->unsubscribe(*subscription);
+            delete subscription;
+        });
+        delete subscriptions;
+
+        ws->setUserData(NULL);
         spdlog::get("console")->info("{0} {1} - Disconnected",ws->getAddress().address,ws->getAddress().port);
     });
 
-
-    pSignalKModel->SubscribeUpdate([this](std::string x) {
-        h.getDefaultGroup<uWS::SERVER>()
-                .broadcast(x.c_str(), x.size(), uWS::OpCode::TEXT);
-    });
 
     spdlog::get("console")->info("Listening: ws://{0}:{1}",bind,port);
     h.listen(port);
