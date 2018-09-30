@@ -35,11 +35,11 @@ find_package( ZLIB REQUIRED )
 
 #### serial
 
-#ExternalProject_Add(serial
-#        GIT_REPOSITORY https://github.com/raffmont/serial.git
-#        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_LOCATION}
-#        TIMEOUT 360
-#        )
+ExternalProject_Add(serial
+        GIT_REPOSITORY https://github.com/raffmont/serial.git
+        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_LOCATION}
+        TIMEOUT 360
+        )
 
 #### spdlog
 
@@ -49,22 +49,13 @@ ExternalProject_Add(spdlog
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_LOCATION}
         )
 
-#### cpphttplib
 
-#ExternalProject_Add(cpphttplib
-#        GIT_REPOSITORY https://github.com/yhirose/cpp-httplib.git
-#        TIMEOUT 360
-#        BUILD_IN_SOURCE 1
-#        CONFIGURE_COMMAND echo Nothing
-#        BUILD_COMMAND echo Nothing
-#        INSTALL_COMMAND cp ${CMAKE_BINARY_DIR}/cpphttplib-prefix/src/cpphttplib/httplib.h ${EXTERNAL_INSTALL_LOCATION}/include
-#        )
 
 #### marnav
 
 ExternalProject_Add(marnav
         GIT_REPOSITORY https://github.com/raffmont/marnav.git
-        CMAKE_ARGS -DENABLE_STATIC=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_LOCATION}
+        CMAKE_ARGS -DENABLE_STATIC=OFF -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=ON -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_LOCATION}
         TIMEOUT 360
         )
 
@@ -100,7 +91,7 @@ ExternalProject_Add(libuv
 #### uWebSockets
 
 ExternalProject_Add(uWebSockets
-        GIT_REPOSITORY https://github.com/uNetworking/uWebSockets.git
+        GIT_REPOSITORY https://github.com/raffmont/uWebSockets.git
         TIMEOUT 360
         BUILD_IN_SOURCE 1
         CONFIGURE_COMMAND echo Noghing
@@ -108,11 +99,19 @@ ExternalProject_Add(uWebSockets
         INSTALL_COMMAND make PREFIX=${EXTERNAL_INSTALL_LOCATION} install
         )
 
+
 # Set the library name
-set(LIBUV ${EXTERNAL_INSTALL_LOCATION}/lib/libuv)
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    set(LIBUV ${EXTERNAL_INSTALL_LOCATION}/lib/libuv.dylib)
-endif()
+set(LIBSERIAL ${EXTERNAL_INSTALL_LOCATION}/lib/libserial.a)
+#if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+#    set(LIBUV ${EXTERNAL_INSTALL_LOCATION}/lib/libuv.dylib)
+#endif()
+
+# Set the library name
+#set(LIBUV ${EXTERNAL_INSTALL_LOCATION}/lib/libuv)
+#if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+#    set(LIBUV ${EXTERNAL_INSTALL_LOCATION}/lib/libuv.dylib)
+#endif()
+set(LIBUV ${EXTERNAL_INSTALL_LOCATION}/lib/libuv_a.a)
 
 # Set the library name
 set(LIBUWS ${EXTERNAL_INSTALL_LOCATION}/lib/libuWS)
@@ -121,10 +120,11 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 endif()
 
 # Set the library name
-set(LIBMARNAV ${EXTERNAL_INSTALL_LOCATION}/lib/libmarnav)
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    set(LIBMARNAV ${EXTERNAL_INSTALL_LOCATION}/lib/libmarnav.dylib)
-endif()
+#set(LIBMARNAV ${EXTERNAL_INSTALL_LOCATION}/lib/libmarnav)
+#if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+#    set(LIBMARNAV ${EXTERNAL_INSTALL_LOCATION}/lib/libmarnav.dylib)
+#endif()
+set(LIBMARNAV ${EXTERNAL_INSTALL_LOCATION}/lib/libmarnav.a)
 
 
 # Add the executables to the project
@@ -150,11 +150,11 @@ add_executable(
         core/providers/DataProviders.hpp
         core/servers/DataServer.cpp
         core/servers/DataServer.hpp
-        core/servers/SignalKDataServer.cpp core/servers/SignalKDataServer.hpp core/model/UpdateBus.cpp core/model/UpdateBus.hpp)
+        core/servers/SignalKDataServer.cpp core/servers/SignalKDataServer.hpp core/model/UpdateBus.cpp core/model/UpdateBus.hpp core/providers/SerialNMEA0183DataProvider.cpp core/providers/SerialNMEA0183DataProvider.hpp)
 
 
 # Expicit the dependencies
-#add_dependencies(${PROJECT_NAME} serial)
+add_dependencies(${PROJECT_NAME} serial)
 add_dependencies(${PROJECT_NAME} spdlog)
 #add_dependencies(${PROJECT_NAME} cpphttplib)
 add_dependencies(${PROJECT_NAME} marnav)
@@ -166,5 +166,5 @@ add_dependencies(${PROJECT_NAME} uWebSockets)
 
 
 # Add the libraries to the linker
-target_link_libraries(${PROJECT_NAME} ${LIBMARNAV} ${LIBUV} ${LIBUWS} ${ZLIB_LIBRARIES} ${OPENSSL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${LIBSERIAL} ${LIBMARNAV} ${LIBUV} ${LIBUWS} ${ZLIB_LIBRARIES} ${OPENSSL_LIBRARIES})
 
