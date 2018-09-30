@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 11)
 
 # TODO: https://developer.android.com/ndk/guides/cmake
 
+
+
 # Include the support to external projects
 include(ExternalProject)
 
@@ -18,15 +20,19 @@ include_directories(SYSTEM ${EXTERNAL_INSTALL_LOCATION}/include)
 link_directories(${EXTERNAL_INSTALL_LOCATION}/lib)
 
 
+
+
 # TODO: Add support for STATIC also.
-find_package(OpenSSL REQUIRED)
+#find_package(OpenSSL REQUIRED)
+set(OPENSSL_USE_STATIC_LIBS TRUE)
+include(FindOpenSSL)
 
 message("OpenSSL include dir: ${OPENSSL_INCLUDE_DIR}")
 message("OpenSSL libraries: ${OPENSSL_LIBRARIES}")
 
 include_directories(${OPENSSL_INCLUDE_DIR})
 link_directories(${OPENSSL_LIBRARIES})
-#list(APPEND LIB_LIST ${OPENSSL_LIBRARIES})
+list(APPEND LIB_LIST ${OPENSSL_LIBRARIES})
 
 find_package( ZLIB REQUIRED )
 
@@ -95,7 +101,7 @@ ExternalProject_Add(uWebSockets
         TIMEOUT 360
         BUILD_IN_SOURCE 1
         CONFIGURE_COMMAND echo Noghing
-        BUILD_COMMAND make PREFIX=${EXTERNAL_INSTALL_LOCATION} CPPFLAGS=-I${EXTERNAL_INSTALL_LOCATION}/include/
+        BUILD_COMMAND make PREFIX=${EXTERNAL_INSTALL_LOCATION} CPPFLAGS=-I${EXTERNAL_INSTALL_LOCATION}/include/ CFLAGS=-I${OPENSSL_INCLUDE_DIR}
         INSTALL_COMMAND make PREFIX=${EXTERNAL_INSTALL_LOCATION} install
         )
 
@@ -114,10 +120,11 @@ set(LIBSERIAL ${EXTERNAL_INSTALL_LOCATION}/lib/libserial.a)
 set(LIBUV ${EXTERNAL_INSTALL_LOCATION}/lib/libuv_a.a)
 
 # Set the library name
-set(LIBUWS ${EXTERNAL_INSTALL_LOCATION}/lib/libuWS)
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    set(LIBUWS ${EXTERNAL_INSTALL_LOCATION}/lib/libuWS.dylib)
-endif()
+#set(LIBUWS ${EXTERNAL_INSTALL_LOCATION}/lib/libuWS)
+#if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+#    set(LIBUWS ${EXTERNAL_INSTALL_LOCATION}/lib/libuWS.dylib)
+#endif()
+set(LIBUWS ${EXTERNAL_INSTALL_LOCATION}/lib/libuWS.a)
 
 # Set the library name
 #set(LIBMARNAV ${EXTERNAL_INSTALL_LOCATION}/lib/libmarnav)
@@ -150,13 +157,17 @@ add_executable(
         core/providers/DataProviders.hpp
         core/servers/DataServer.cpp
         core/servers/DataServer.hpp
-        core/servers/SignalKDataServer.cpp core/servers/SignalKDataServer.hpp core/model/UpdateBus.cpp core/model/UpdateBus.hpp core/providers/SerialNMEA0183DataProvider.cpp core/providers/SerialNMEA0183DataProvider.hpp)
+        core/servers/SignalKDataServer.cpp
+        core/servers/SignalKDataServer.hpp
+        core/model/UpdateBus.cpp
+        core/model/UpdateBus.hpp
+        core/providers/SerialNMEA0183DataProvider.cpp
+        core/providers/SerialNMEA0183DataProvider.hpp)
 
 
 # Expicit the dependencies
 add_dependencies(${PROJECT_NAME} serial)
 add_dependencies(${PROJECT_NAME} spdlog)
-#add_dependencies(${PROJECT_NAME} cpphttplib)
 add_dependencies(${PROJECT_NAME} marnav)
 add_dependencies(${PROJECT_NAME} json)
 add_dependencies(${PROJECT_NAME} variant)
