@@ -23,12 +23,12 @@ int main(int argc, char* argv[]) {
     auto console = spdlog::stdout_color_mt("console");
     auto err_logger = spdlog::stderr_color_mt("stderr");
 
-    if (argc < 1) {
+    if (argc != 2) {
         err_logger->error("Usage: {0} settings.json",argv[0]);
         return 1;
     }
 
-    console->info("Welcome to DYNAMO/FairWomd SignalK Server!");
+    console->info("Welcome to DYNAMO/FairWind SignalK Server! http://fairwind.uniparthenope.it");
 
     std::ifstream t(argv[1]);
     std::string sSettings((std::istreambuf_iterator<char>(t)),
