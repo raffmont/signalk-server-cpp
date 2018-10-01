@@ -11,6 +11,9 @@
 
 #include "../model/SignalKModel.h"
 #include "DataProvider.hpp"
+#include "SerialNMEA0183DataProvider.hpp"
+#include "FileNMEA0183DataProvider.hpp"
+#include "WebSocketClientDataProvider.hpp"
 
 
 

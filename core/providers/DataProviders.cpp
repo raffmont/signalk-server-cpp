@@ -3,8 +3,7 @@
 //
 
 #include "DataProviders.hpp"
-#include "FileNMEA0183DataProvider.hpp"
-#include "WebSocketClientDataProvider.hpp"
+
 
 DataProviders::DataProviders() {
 
@@ -21,18 +20,22 @@ DataProviders::DataProviders(SignalK::SignalKModel *pSignalKModel,nlohmann::json
 
         std::string id=provider["id"];
         std::string type=provider["type"];
+        bool enabled=provider["enabled"];
         nlohmann::json options=provider["options"];
 
-        spdlog::get("console")->info("Data Provider: {0} {1}",id,type);
-        if (type=="providers/nmea0183/filestream") {
-            pDataProvider=new FileNMEA0183DataProvider(id,pSignalKModel,options);
-        } else if (type=="providers/signalk/websocket/client") {
-            pDataProvider=new WebSocketClientDataProvider(id,pSignalKModel,options);
+        spdlog::get("console")->info("Data Provider: {0} {1} {2}",id,type,enabled);
+        if (enabled) {
+            if (type == "providers/nmea0183/serial") {
+                pDataProvider = new SerialNMEA0183DataProvider(id, pSignalKModel, options);
+            } else if (type == "providers/nmea0183/filestream") {
+                pDataProvider = new FileNMEA0183DataProvider(id, pSignalKModel, options);
+            } else if (type == "providers/signalk/websocket/client") {
+                pDataProvider = new WebSocketClientDataProvider(id, pSignalKModel, options);
+            }
+            if (pDataProvider != NULL) {
+                pItems->push_back(pDataProvider);
+            }
         }
-        if (pDataProvider!=NULL) {
-            pItems->push_back(pDataProvider);
-        }
-
     }
 }
 
