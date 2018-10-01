@@ -15,14 +15,13 @@ FileNMEA0183DataProvider::FileNMEA0183DataProvider(std::string id,SignalK::Signa
 FileNMEA0183DataProvider::FileNMEA0183DataProvider(std::string id, SignalK::SignalKModel *document, nlohmann::json options): FileNMEA0183DataProvider(id,document,options["path"],options["millis"]) {}
 
 void FileNMEA0183DataProvider::run(){
-
+    spdlog::get("console")->info("FileNMEA0183DataProvider: {0}",filePath);
     std::ifstream nmeaFile(filePath);
     if(nmeaFile) {
 
         std::string line;
         while (std::getline(nmeaFile, line)) {
-            //std::cout <<  "FileNMEA0183DataProvider::run:" << line << "\n";
-            parse(line);
+            parse(id,line);
             std::this_thread::sleep_for(std::chrono::milliseconds(millis));
         }
 
