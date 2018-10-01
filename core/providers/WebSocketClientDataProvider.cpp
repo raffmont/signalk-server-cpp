@@ -9,7 +9,7 @@
 
 WebSocketClientDataProvider::WebSocketClientDataProvider(std::string id,SignalK::SignalKModel *document, int perms, std::string url) {
     this->id=id;
-    this->type="providers/signalk/websocket/client";
+    this->type="providers/signalk/websocket";
     this->pSignalKModel=pSignalKModel;
     this->url=url;
 }
