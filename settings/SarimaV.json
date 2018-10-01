@@ -17,10 +17,19 @@
   "interfaces": {},
 
   "providers": [
-    { "id":"FileNMEA0193", "type":"providers/nmea0183/filestream",
+    { "id":"FileNMEA0183", "type":"providers/nmea0183/filestream", "enabled":false,
       "options":{
         "path":"/Users/raffaelemontella/CLionProjects/signalk-server-cpp/samples/SarimaV-20060114.nmea",
         "millis":1000
+      }
+    },
+    { "id":"SerialNMEA0183", "type":"providers/nmea0183/serial", "enabled":true,
+      "options":{
+        "device":"/dev/cu.usbserial",
+        "baud":4800,
+        "bytesize":8,
+        "parity": "none",
+        "stopbits": 1
       }
     }
   ]

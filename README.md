@@ -6,6 +6,11 @@ This SignalK server (http://signalk.org) has been designed in order to be execut
 Current status:
 The signalk-server-cpp works as nmea to signalk converter and web socket server.
 
+Available providers:
+1. providers/nmea0183/filestream - Reads a NMEA 0183 log file
+2. providers/nmea0183/serial - Reads NMEA 0183 data from a serial port
+3. providers/signalk/websocket - Reads SignalK data from another server
+
 Usage:
 
     signalk-server-cpp settings.json
@@ -67,10 +72,19 @@ Example of configuration file:
       "interfaces": {},
     
       "providers": [
-        { "id":"FileNMEA0193", "type":"providers/nmea0183/filestream",
+        { "id":"FileNMEA0183", "type":"providers/nmea0183/filestream", "enabled":false,
           "options":{
             "path":"/Users/raffaelemontella/CLionProjects/signalk-server-cpp/samples/SarimaV-20060114.nmea",
             "millis":1000
+          }
+        },
+        { "id":"SerialNMEA0183", "type":"providers/nmea0183/serial", "enabled":true,
+          "options":{
+            "device":"/dev/cu.usbserial",
+            "baud":4800,
+            "bytesize":8,
+            "parity": "none",
+            "stopbits": 1
           }
         }
       ]
