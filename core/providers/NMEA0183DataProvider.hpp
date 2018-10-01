@@ -31,11 +31,11 @@
 
 class NMEA0183DataProvider: public DataProvider {
 public:
-    void parse(std::string line);
+    void parse(std::string label, std::string line);
 
 private:
     bool replace(std::string& str, const std::string& from, const std::string& to);
-    nlohmann::json makeUpdate(std::string talker, std::string id);
+    nlohmann::json makeUpdate(std::string label,std::string talker, std::string id);
     double PI=3.141592653589793238463L;
     double D2R=0.0174533;
     double r2d=57.2957795;

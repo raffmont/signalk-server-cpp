@@ -9,7 +9,7 @@
 using namespace marnav;
 using json = nlohmann::json;
 
-void NMEA0183DataProvider::parse(std::string line) {
+void NMEA0183DataProvider::parse(std::string label,std::string line) {
 
     if (pSignalKModel!=NULL && line.empty()==false) {
         replace(line, "\n", "");
@@ -35,7 +35,7 @@ void NMEA0183DataProvider::parse(std::string line) {
                         utils::optional<geo::longitude> longitude = gll->get_longitude();
                         utils::optional<geo::latitude> latitude = gll->get_latitude();
 
-                        json updatePosition = makeUpdate(nmea::to_string(sentence->get_talker()), nmea::to_string(sentence->id()));
+                        json updatePosition = makeUpdate(label,nmea::to_string(sentence->get_talker()), nmea::to_string(sentence->id()));
                         updatePosition["values"] = {
                                 {
                                         {"path", "navigation.position"},
@@ -59,7 +59,7 @@ void NMEA0183DataProvider::parse(std::string line) {
                         utils::optional<double> sog = rmc->get_sog();
                         utils::optional<double> mag = rmc->get_mag();
 
-                        json updatePosition = makeUpdate(nmea::to_string(sentence->get_talker()),
+                        json updatePosition = makeUpdate(label,nmea::to_string(sentence->get_talker()),
                                                          nmea::to_string(sentence->id()));
                         updatePosition["values"] = {
                                 {
@@ -74,7 +74,7 @@ void NMEA0183DataProvider::parse(std::string line) {
                         };
                         updates.push_back(updatePosition);
 
-                        json updateMagneticVariation = makeUpdate(nmea::to_string(sentence->get_talker()),
+                        json updateMagneticVariation = makeUpdate(label,nmea::to_string(sentence->get_talker()),
                                                                   nmea::to_string(sentence->id()));
                         updateMagneticVariation["values"] = {
                                 {
@@ -85,7 +85,7 @@ void NMEA0183DataProvider::parse(std::string line) {
                         };
                         updates.push_back(updateMagneticVariation);
 
-                        json updateCourseOverGroundTrue = makeUpdate(nmea::to_string(sentence->get_talker()),
+                        json updateCourseOverGroundTrue = makeUpdate(label,nmea::to_string(sentence->get_talker()),
                                                                      nmea::to_string(sentence->id()));
                         updateCourseOverGroundTrue["values"] = {
                                 {
@@ -96,7 +96,7 @@ void NMEA0183DataProvider::parse(std::string line) {
                         };
                         updates.push_back(updateCourseOverGroundTrue);
 
-                        json courseOverGroundMagnetic = makeUpdate(nmea::to_string(sentence->get_talker()),
+                        json courseOverGroundMagnetic = makeUpdate(label,nmea::to_string(sentence->get_talker()),
                                                                    nmea::to_string(sentence->id()));
                         updateCourseOverGroundTrue["values"] = {
                                 {
@@ -107,7 +107,7 @@ void NMEA0183DataProvider::parse(std::string line) {
                         };
                         updates.push_back(updateCourseOverGroundTrue);
 
-                        json updateSpeedOverGround = makeUpdate(nmea::to_string(sentence->get_talker()),
+                        json updateSpeedOverGround = makeUpdate(label,nmea::to_string(sentence->get_talker()),
                                                                 nmea::to_string(sentence->id()));
                         updateSpeedOverGround["values"] = {
                                 {
@@ -126,7 +126,7 @@ void NMEA0183DataProvider::parse(std::string line) {
                     utils::optional<double> directionTrue=mwd->get_direction_true();
                     utils::optional<double> speedKn=mwd->get_speed_kn();
 
-                    json updateDirectionMagnetic = makeUpdate(nmea::to_string(sentence->get_talker()), nmea::to_string(sentence->id()));
+                    json updateDirectionMagnetic = makeUpdate(label,nmea::to_string(sentence->get_talker()), nmea::to_string(sentence->id()));
                     updateDirectionMagnetic["values"] = {
                         {
                             {"path", "environment.wind.directionMagnetic"},
@@ -135,7 +135,7 @@ void NMEA0183DataProvider::parse(std::string line) {
                     };
                     updates.push_back(updateDirectionMagnetic);
 
-                    json updateDirectionTrue = makeUpdate(nmea::to_string(sentence->get_talker()), nmea::to_string(sentence->id()));
+                    json updateDirectionTrue = makeUpdate(label,nmea::to_string(sentence->get_talker()), nmea::to_string(sentence->id()));
                     updateDirectionTrue["values"] = {
                             {
                                     {"path", "environment.wind.directionTrue"},
@@ -144,7 +144,7 @@ void NMEA0183DataProvider::parse(std::string line) {
                     };
                     updates.push_back(updateDirectionTrue);
 
-                    json updateSpeedTrue = makeUpdate(nmea::to_string(sentence->get_talker()), nmea::to_string(sentence->id()));
+                    json updateSpeedTrue = makeUpdate(label,nmea::to_string(sentence->get_talker()), nmea::to_string(sentence->id()));
                     updateSpeedTrue["values"] = {
                             {
                                     {"path", "environment.wind.speedTrue"},
@@ -160,7 +160,7 @@ void NMEA0183DataProvider::parse(std::string line) {
                     utils::optional<double> trackMagn=vtg->get_track_magn();
                     utils::optional<double> trackTrue=vtg->get_track_true();
 
-                    json updateCourseOverGroundTrue = makeUpdate(nmea::to_string(sentence->get_talker()),
+                    json updateCourseOverGroundTrue = makeUpdate(label,nmea::to_string(sentence->get_talker()),
                                                                  nmea::to_string(sentence->id()));
                     updateCourseOverGroundTrue["values"] = {
                             {
@@ -171,7 +171,7 @@ void NMEA0183DataProvider::parse(std::string line) {
                     };
                     updates.push_back(updateCourseOverGroundTrue);
 
-                    json courseOverGroundMagnetic = makeUpdate(nmea::to_string(sentence->get_talker()),
+                    json courseOverGroundMagnetic = makeUpdate(label,nmea::to_string(sentence->get_talker()),
                                                                nmea::to_string(sentence->id()));
                     updateCourseOverGroundTrue["values"] = {
                             {
@@ -182,7 +182,7 @@ void NMEA0183DataProvider::parse(std::string line) {
                     };
                     updates.push_back(updateCourseOverGroundTrue);
 
-                    json updateSpeedOverGround = makeUpdate(nmea::to_string(sentence->get_talker()),
+                    json updateSpeedOverGround = makeUpdate(label,nmea::to_string(sentence->get_talker()),
                                                             nmea::to_string(sentence->id()));
                     updateSpeedOverGround["values"] = {
                             {
@@ -203,7 +203,7 @@ void NMEA0183DataProvider::parse(std::string line) {
 
                     utils::optional<double > depthM = dbt->get_depth_meter();
 
-                    json updateBelowTransducer = makeUpdate(nmea::to_string(sentence->get_talker()),
+                    json updateBelowTransducer = makeUpdate(label,nmea::to_string(sentence->get_talker()),
                                                             nmea::to_string(sentence->id()));
                     updateBelowTransducer["values"] = {
                             {
@@ -222,7 +222,7 @@ void NMEA0183DataProvider::parse(std::string line) {
                     utils::optional<geo::latitude> latitude = gga->get_latitude();
                     utils::optional<double> altitude = gga->get_altitude();
 
-                    json updatePosition = makeUpdate(nmea::to_string(sentence->get_talker()), nmea::to_string(sentence->id()));
+                    json updatePosition = makeUpdate(label,nmea::to_string(sentence->get_talker()), nmea::to_string(sentence->id()));
                     updatePosition["values"] = {
                             {
                                     {"path", "navigation.position"},
@@ -246,7 +246,7 @@ void NMEA0183DataProvider::parse(std::string line) {
                         magnVar=magnVar.value()*-1;
                     }
 
-                    json updateMagneticVariation = makeUpdate(nmea::to_string(sentence->get_talker()),
+                    json updateMagneticVariation = makeUpdate(label,nmea::to_string(sentence->get_talker()),
                                                             nmea::to_string(sentence->id()));
                     updateMagneticVariation["values"] = {
                             {
@@ -262,7 +262,7 @@ void NMEA0183DataProvider::parse(std::string line) {
 
                     utils::optional<double> headingMagn=hdm->get_heading();
 
-                    json updateHeadingMagnetic = makeUpdate(nmea::to_string(sentence->get_talker()),
+                    json updateHeadingMagnetic = makeUpdate(label,nmea::to_string(sentence->get_talker()),
                                                             nmea::to_string(sentence->id()));
                     updateHeadingMagnetic["values"] = {
                         {
@@ -278,7 +278,7 @@ void NMEA0183DataProvider::parse(std::string line) {
 
                     utils::optional<double> headingTrue=hdt->get_heading();
 
-                    json updateHeadingTrue = makeUpdate(nmea::to_string(sentence->get_talker()),
+                    json updateHeadingTrue = makeUpdate(label,nmea::to_string(sentence->get_talker()),
                                                             nmea::to_string(sentence->id()));
                     updateHeadingTrue["values"] = {
                             {
@@ -297,7 +297,7 @@ void NMEA0183DataProvider::parse(std::string line) {
 
                         utils::optional<double> rudder1=rsa->get_rudder1();
 
-                        json updateRudderAngle1 = makeUpdate(nmea::to_string(sentence->get_talker()),
+                        json updateRudderAngle1 = makeUpdate(label,nmea::to_string(sentence->get_talker()),
                                                            nmea::to_string(sentence->id()));
                         updateRudderAngle1["values"] = {
                                 {
@@ -332,7 +332,7 @@ void NMEA0183DataProvider::parse(std::string line) {
 
                     if (angleRef.value() == nmea::reference::RELATIVE) {
 
-                        json updateAngleApparent = makeUpdate(nmea::to_string(sentence->get_talker()),
+                        json updateAngleApparent = makeUpdate(label,nmea::to_string(sentence->get_talker()),
                                                               nmea::to_string(sentence->id()));
 
                         updateAngleApparent["values"] = {
@@ -344,7 +344,7 @@ void NMEA0183DataProvider::parse(std::string line) {
 
                         updates.push_back(updateAngleApparent);
 
-                        json updateSpeedApparent = makeUpdate(nmea::to_string(sentence->get_talker()),
+                        json updateSpeedApparent = makeUpdate(label,nmea::to_string(sentence->get_talker()),
                                                               nmea::to_string(sentence->id()));
 
                         updateSpeedApparent["values"] = {
@@ -357,7 +357,7 @@ void NMEA0183DataProvider::parse(std::string line) {
                         updates.push_back(updateSpeedApparent);
                     } else if (angleRef.value() == nmea::reference::TRUE) {
 
-                        json updateAngleTrueWater = makeUpdate(nmea::to_string(sentence->get_talker()),
+                        json updateAngleTrueWater = makeUpdate(label,nmea::to_string(sentence->get_talker()),
                                                               nmea::to_string(sentence->id()));
 
                         updateAngleTrueWater["values"] = {
@@ -369,7 +369,7 @@ void NMEA0183DataProvider::parse(std::string line) {
 
                         updates.push_back(updateAngleTrueWater);
 
-                        json updateSpeedTrue = makeUpdate(nmea::to_string(sentence->get_talker()),
+                        json updateSpeedTrue = makeUpdate(label,nmea::to_string(sentence->get_talker()),
                                                               nmea::to_string(sentence->id()));
 
                         updateSpeedTrue["values"] = {
@@ -406,7 +406,7 @@ void NMEA0183DataProvider::parse(std::string line) {
                     updates.push_back(updateHeadingTrue);
                      */
 
-                    json updateHeadingMagnetic = makeUpdate(nmea::to_string(sentence->get_talker()),
+                    json updateHeadingMagnetic = makeUpdate(label,nmea::to_string(sentence->get_talker()),
                                                               nmea::to_string(sentence->id()));
 
                     updateHeadingMagnetic["values"] = {
@@ -419,7 +419,7 @@ void NMEA0183DataProvider::parse(std::string line) {
                     updates.push_back(updateHeadingMagnetic);
 
 
-                    json updateSpeedThroughWater = makeUpdate(nmea::to_string(sentence->get_talker()),
+                    json updateSpeedThroughWater = makeUpdate(label,nmea::to_string(sentence->get_talker()),
                                                       nmea::to_string(sentence->id()));
 
                     updateSpeedThroughWater["values"] = {
@@ -447,7 +447,7 @@ void NMEA0183DataProvider::parse(std::string line) {
                         angle=-1*angle.value();
                     }
 
-                    json updateAngleApparent = makeUpdate(nmea::to_string(sentence->get_talker()),
+                    json updateAngleApparent = makeUpdate(label,nmea::to_string(sentence->get_talker()),
                                                           nmea::to_string(sentence->id()));
 
                     updateAngleApparent["values"] = {
@@ -459,7 +459,7 @@ void NMEA0183DataProvider::parse(std::string line) {
 
                     updates.push_back(updateAngleApparent);
 
-                    json updateSpeedApparent = makeUpdate(nmea::to_string(sentence->get_talker()),
+                    json updateSpeedApparent = makeUpdate(label,nmea::to_string(sentence->get_talker()),
                                                           nmea::to_string(sentence->id()));
 
                     updateSpeedApparent["values"] = {
@@ -505,7 +505,7 @@ void NMEA0183DataProvider::parse(std::string line) {
             }
 
         } catch (nmea::unknown_sentence ex) {
-            //spdlog::get("console")->warn("Unknown: {0}",line);
+            spdlog::get("console")->warn("Unknown: {0}",line);
         }
     }
 };
@@ -520,13 +520,13 @@ bool NMEA0183DataProvider::replace(std::string& str, const std::string& from, co
 
 
 
-nlohmann::json NMEA0183DataProvider::makeUpdate(std::string talker, std::string id) {
+nlohmann::json NMEA0183DataProvider::makeUpdate(std::string label, std::string talker, std::string id) {
     json update  = {
             {"source",    {
                                   {"sentence", id},
                                   {"talker", talker},
                                   {"type", "NMEA0183"},
-                                  {"label", "nmeaFromFile"}
+                                  {"label", label}
                           }
             },
             {"timestamp", pSignalKModel->currentISO8601TimeUTC()}
