@@ -16,6 +16,8 @@
 #include <mutex>
 #include <iomanip>
 
+#include "Node.hpp"
+
 #include <spdlog/spdlog.h>
 #include <mpark/variant.hpp>
 #include <nlohmann/json.hpp>
@@ -62,7 +64,6 @@ namespace SignalK {
         UpdateBus *getUpdateBus() { return bus; }
     protected:
         friend std::ostream& operator<< (std::ostream& os, const SignalKModel& dt);
-        class Node;
         Node* root;
         UpdateBus * bus;
 
