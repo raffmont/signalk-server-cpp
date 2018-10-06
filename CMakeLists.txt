@@ -162,7 +162,7 @@ add_executable(
         core/model/UpdateBus.cpp
         core/model/UpdateBus.hpp
         core/providers/SerialNMEA0183DataProvider.cpp
-        core/providers/SerialNMEA0183DataProvider.hpp)
+        core/providers/SerialNMEA0183DataProvider.hpp core/model/Node.cpp core/model/Node.hpp)
 
 
 # Expicit the dependencies
