@@ -26,7 +26,7 @@ public:
 protected:
     std::thread t;
     bool threadStop = false;
-    SignalK::SignalKModel *pSignalKModel=NULL;
+    SignalK::SignalKModel *pSignalKModel= nullptr;
 
 };
 
