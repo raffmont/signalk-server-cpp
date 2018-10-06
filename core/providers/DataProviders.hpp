@@ -25,8 +25,12 @@ public:
     virtual void run();
 
 private:
-    SignalK::SignalKModel *pSignalKModel=NULL;
-    std::vector<DataProvider *> *pItems=NULL;
+    nlohmann::json settings;
+    bool threadStop = false;
+    long millis=5000;
+    SignalK::SignalKModel *pSignalKModel= nullptr;
+    //std::vector<DataProvider *> *pItems=NULL;
+    std::map<std::string, DataProvider *> providers;
 };
 
 

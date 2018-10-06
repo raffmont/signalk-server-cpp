@@ -11,9 +11,9 @@
 
 class SerialNMEA0183DataProvider : public NMEA0183DataProvider {
 public:
-    virtual void run();
-    SerialNMEA0183DataProvider(std::string id, SignalK::SignalKModel *document, std::string device, unsigned long baud, serial::bytesize_t byteSize, std::string parity, serial::stopbits_t stopbits);
-    SerialNMEA0183DataProvider(std::string id, SignalK::SignalKModel *document, nlohmann::json options);
+    virtual void onRun();
+    SerialNMEA0183DataProvider(bool enabled, std::string id, SignalK::SignalKModel *pSignalKModel, std::string device, unsigned long baud, serial::bytesize_t byteSize, std::string parity, serial::stopbits_t stopbits);
+    SerialNMEA0183DataProvider(bool enabled, std::string id, SignalK::SignalKModel *pSignalKModel, nlohmann::json options);
     virtual ~SerialNMEA0183DataProvider();
 
 private:
