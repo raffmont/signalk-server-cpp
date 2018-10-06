@@ -16,6 +16,7 @@
 class WebSocketDataServer : public SignalKDataServer {
 public:
     virtual void run();
+
     WebSocketDataServer(SignalK::SignalKModel *pSignalKModel, std::string bind, int port, std::string root);
     WebSocketDataServer(SignalK::SignalKModel *pSignalKModel, nlohmann::json options);
     virtual ~WebSocketDataServer();

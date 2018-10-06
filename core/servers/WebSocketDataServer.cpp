@@ -59,18 +59,22 @@ void WebSocketDataServer::run(){
                 spdlog::get("console")->info("{0} {1} - Message",ws->getAddress().address,ws->getAddress().port);
 
                 std::string sMessage=std::string(message,length);
-                nlohmann::json jMessage=nlohmann::json::parse(sMessage);
-                if (jMessage["context"] && jMessage["subscribe"]) {
-                    std::vector<nlohmann::json*> *subscriptions = (std::vector<nlohmann::json*> *) (ws->getUserData());
-                    nlohmann::json *subscription = new nlohmann::json(sMessage);
+                try {
+                    nlohmann::json jMessage = nlohmann::json::parse(sMessage);
+                    if (jMessage["context"] && jMessage["subscribe"]) {
+                        std::vector<nlohmann::json *> *subscriptions = (std::vector<nlohmann::json *> *) (ws->getUserData());
+                        nlohmann::json *subscription = new nlohmann::json(sMessage);
 
-                    pSignalKModel->getUpdateBus()->subscribe(*subscription, [ws](nlohmann::json update) {
-                        spdlog::get("console")->debug("{0} - onUpdate", update.dump());
-                        std::string updateString = update.dump();
-                        ws->send(updateString.c_str(), updateString.size(), uWS::OpCode::TEXT);
-                    });
+                        pSignalKModel->getUpdateBus()->subscribe(*subscription, [ws](nlohmann::json update) {
+                            spdlog::get("console")->debug("{0} - onUpdate", update.dump());
+                            std::string updateString = update.dump();
+                            ws->send(updateString.c_str(), updateString.size(), uWS::OpCode::TEXT);
+                        });
 
-                    subscriptions->push_back(subscription);
+                        subscriptions->push_back(subscription);
+                    }
+                } catch (nlohmann::detail::parse_error exception) {
+                    spdlog::get("console")->error("WebSocketDataServer: {0}",exception.what());
                 }
             });
 
