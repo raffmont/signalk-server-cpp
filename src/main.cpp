@@ -11,10 +11,13 @@
 #include <uWS/uWS.h>
 
 #include "core/model/SignalKModel.h"
-#include "core/servers/WebSocketDataServer.hpp"
+#include "core/servers/WebDataServer.hpp"
+#include "core/servers/TcpIpSignalKDataServer.hpp"
 #include "core/providers/WebSocketClientDataProvider.hpp"
 #include "core/providers/FileNMEA0183DataProvider.hpp"
 #include "core/providers/DataProviders.hpp"
+
+#include "SignalKServer.hpp"
 
 using namespace std;
 
@@ -28,23 +31,15 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    console->info("Welcome to DYNAMO/FairWind SignalK Server! http://fairwind.uniparthenope.it");
-
     std::ifstream t(argv[1]);
     std::string sSettings((std::istreambuf_iterator<char>(t)),
-                    std::istreambuf_iterator<char>());
+                          std::istreambuf_iterator<char>());
     nlohmann::json settings=nlohmann::json::parse(sSettings);
 
-    std::string uuid=settings["vessel"]["uuid"];
+    console->info("Welcome to DYNAMO/FairWind SignalK Server! http://fairwind.uniparthenope.it");
 
-    SignalK::SignalKModel *pSignalKModel=new SignalK::SignalKModel(uuid, "v0.1.0");
+    SignalKServer server(settings);
+    server.run();
 
-    WebSocketDataServer *pWebSocketServer = new WebSocketDataServer(pSignalKModel,"localhost",3000,"/Users/raffaelemontella/CLionProjects/signalk-server-cpp/www/");
-    pWebSocketServer->start();
-
-    DataProviders dataProviders(pSignalKModel,settings);
-    dataProviders.run();
-
-    delete(pSignalKModel);
     return 0;
 }
