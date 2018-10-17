@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 project(signalk_server_cpp)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # TODO: https://developer.android.com/ndk/guides/cmake
 
@@ -94,6 +95,14 @@ ExternalProject_Add(libuv
         )
 
 
+####
+
+ExternalProject_Add(uvw
+        GIT_REPOSITORY https://github.com/skypjack/uvw.git
+        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_LOCATION}
+        TIMEOUT 360
+        )
+
 #### uWebSockets
 
 ExternalProject_Add(uWebSockets
@@ -137,32 +146,32 @@ set(LIBMARNAV ${EXTERNAL_INSTALL_LOCATION}/lib/libmarnav.a)
 # Add the executables to the project
 add_executable(
         ${PROJECT_NAME}
-        main.cpp
-        core/model/SignalKModel.h
-        core/model/SignalKModel.cpp
-        core/model/ReaderHandler.h
-        core/providers/DataProvider.cpp
-        core/providers/DataProvider.hpp
-        core/servers/WebSocketDataServer.cpp
-        core/servers/WebSocketDataServer.hpp
-        core/providers/WebSocketClientDataProvider.cpp
-        core/providers/WebSocketClientDataProvider.hpp
-        core/providers/NMEA0183DataProvider.cpp
-        core/providers/NMEA0183DataProvider.hpp
-        core/providers/SignalKDataProvider.cpp
-        core/providers/SignalKDataProvider.hpp
-        core/providers/FileNMEA0183DataProvider.cpp
-        core/providers/FileNMEA0183DataProvider.hpp
-        core/providers/DataProviders.cpp
-        core/providers/DataProviders.hpp
-        core/servers/DataServer.cpp
-        core/servers/DataServer.hpp
-        core/servers/SignalKDataServer.cpp
-        core/servers/SignalKDataServer.hpp
-        core/model/UpdateBus.cpp
-        core/model/UpdateBus.hpp
-        core/providers/SerialNMEA0183DataProvider.cpp
-        core/providers/SerialNMEA0183DataProvider.hpp core/model/Node.cpp core/model/Node.hpp)
+        src/main.cpp
+        src/core/model/SignalKModel.h
+        src/core/model/SignalKModel.cpp
+        src/core/model/ReaderHandler.h
+        src/core/providers/DataProvider.cpp
+        src/core/providers/DataProvider.hpp
+        src/core/servers/WebDataServer.cpp
+        src/core/servers/WebDataServer.hpp
+        src/core/providers/WebSocketClientDataProvider.cpp
+        src/core/providers/WebSocketClientDataProvider.hpp
+        src/core/providers/NMEA0183DataProvider.cpp
+        src/core/providers/NMEA0183DataProvider.hpp
+        src/core/providers/SignalKDataProvider.cpp
+        src/core/providers/SignalKDataProvider.hpp
+        src/core/providers/FileNMEA0183DataProvider.cpp
+        src/core/providers/FileNMEA0183DataProvider.hpp
+        src/core/providers/DataProviders.cpp
+        src/core/providers/DataProviders.hpp
+        src/core/servers/DataServer.cpp
+        src/core/servers/DataServer.hpp
+        src/core/servers/SignalKDataServer.cpp
+        src/core/servers/SignalKDataServer.hpp
+        src/core/model/UpdateBus.cpp
+        src/core/model/UpdateBus.hpp
+        src/core/providers/SerialNMEA0183DataProvider.cpp
+        src/core/providers/SerialNMEA0183DataProvider.hpp src/core/model/Node.cpp src/core/model/Node.hpp src/core/servers/TcpIpSignalKDataServer.cpp src/core/servers/TcpIpSignalKDataServer.hpp src/SignalKServer.cpp src/SignalKServer.hpp src/core/DataThread.cpp src/core/DataThread.hpp src/core/servers/DataServers.cpp src/core/servers/DataServers.hpp src/core/servers/TcpIpNMEA0183DataServer.cpp src/core/servers/TcpIpNMEA0183DataServer.hpp src/core/servers/NMEA0183DataServer.cpp src/core/servers/NMEA0183DataServer.hpp src/core/DataThreads.cpp src/core/DataThreads.hpp)
 
 
 # Expicit the dependencies
@@ -174,6 +183,9 @@ add_dependencies(${PROJECT_NAME} variant)
 add_dependencies(${PROJECT_NAME} libuv)
 add_dependencies(uWebSockets libuv)
 add_dependencies(${PROJECT_NAME} uWebSockets)
+add_dependencies(uvw libuv)
+add_dependencies(${PROJECT_NAME} uvw)
+
 
 
 # Add the libraries to the linker
