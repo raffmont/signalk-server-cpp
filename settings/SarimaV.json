@@ -16,14 +16,36 @@
 
   "interfaces": {},
 
-  "providers": [
-    { "id":"FileNMEA0183", "type":"providers/nmea0183/filestream", "enabled":false,
+  "servers": [
+    { "id":"signalk-web", "type":"servers/signalk/web", "enabled":true,
       "options":{
-        "path":"/Users/raffaelemontella/CLionProjects/signalk-server-cpp/samples/SarimaV-20060114.nmea",
-        "millis":1000
+        "bind":"localhost",
+        "port":3000,
+        "root":"/Users/raffaelemontella/CLionProjects/signalk-server-cpp/www/"
       }
     },
-    { "id":"SerialNMEA0183", "type":"providers/nmea0183/serial", "enabled":true,
+    { "id":"signalk-tcpip", "type":"servers/signalk/tcpip", "enabled":false,
+      "options":{
+        "bind":"localhost",
+        "port":55555
+      }
+    },
+    { "id":"signalk-tcpip", "type":"servers/nmea0183/tcpip", "enabled":false,
+      "options":{
+        "bind":"localhost",
+        "port":10110
+      }
+    }
+  ],
+
+  "providers": [
+    { "id":"FileNMEA0183", "type":"providers/nmea0183/filestream", "enabled":true,
+      "options":{
+        "path":"/Users/raffaelemontella/CLionProjects/signalk-server-cpp/samples/SarimaV-20060114.nmea",
+        "millis":250
+      }
+    },
+    { "id":"SerialNMEA0183", "type":"providers/nmea0183/serial", "enabled":false,
       "options":{
         "device":"/dev/cu.usbserial",
         "baud":4800,
