@@ -10,23 +10,16 @@
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 #include "../model/SignalKModel.h"
+#include "../DataThread.hpp"
 
 
-class DataServer {
+class DataServer : public DataThread {
 public:
+
     DataServer();
-    DataServer(SignalK::SignalKModel *pSignalKModel);
-    DataServer(SignalK::SignalKModel *pSignalKModel, nlohmann::json options);
+    DataServer(bool enabled,std::string id,SignalK::SignalKModel *pSignalKModel);
+    DataServer(bool enabled,std::string id,SignalK::SignalKModel *pSignalKModel, nlohmann::json options);
     virtual ~DataServer();
-    void start();
-    void join();
-    virtual void run();
-
-
-protected:
-    std::thread t;
-    bool threadStop = false;
-    SignalK::SignalKModel *pSignalKModel= nullptr;
 
 };
 

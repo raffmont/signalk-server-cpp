@@ -13,26 +13,29 @@
 #include <fstream>
 #include <streambuf>
 
-class WebSocketDataServer : public SignalKDataServer {
+class WebDataServer : public SignalKDataServer {
 public:
-    virtual void run();
-
-    WebSocketDataServer(SignalK::SignalKModel *pSignalKModel, std::string bind, int port, std::string root);
-    WebSocketDataServer(SignalK::SignalKModel *pSignalKModel, nlohmann::json options);
-    virtual ~WebSocketDataServer();
 
     const std::string SIGNALK="/signalk";
     const std::string SIGNALK_V1_STREAM="/signalk/v1/stream";
     const std::string SIGNALK_V1_API="/signalk/v1/api/";
 
+    WebDataServer(bool enabled,std::string id,SignalK::SignalKModel *pSignalKModel, std::string bind, int port, std::string root);
+    WebDataServer(bool enabled,std::string id,SignalK::SignalKModel *pSignalKModel, nlohmann::json options);
+    virtual ~WebDataServer();
+
+    virtual void onRun();
+
+
 private:
+    long millis=1000;
     uWS::Hub h;
     std::string root="www";
     std::string bind="localhost";
     int port=3000;
 
-    bool hasEnding (std::string const &fullString, std::string const &ending);
-
+    static bool hasEnding (std::string const &fullString, std::string const &ending);
+    static std::vector<char> readAllBytes(std::string filename);
 
 };
 
