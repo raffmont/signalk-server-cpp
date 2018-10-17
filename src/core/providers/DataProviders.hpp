@@ -14,23 +14,15 @@
 #include "SerialNMEA0183DataProvider.hpp"
 #include "FileNMEA0183DataProvider.hpp"
 #include "WebSocketClientDataProvider.hpp"
+#include "../DataThreads.hpp"
 
 
-
-class DataProviders {
+class DataProviders: public DataThreads {
 public:
-    DataProviders();
-    DataProviders(SignalK::SignalKModel *pSignalKModel,nlohmann::json settings);
+    DataProviders(SignalK::SignalKModel *pSignalKModel,nlohmann::json *pSettings);
     virtual ~DataProviders();
-    virtual void run();
 
-private:
-    nlohmann::json settings;
-    bool threadStop = false;
-    long millis=5000;
-    SignalK::SignalKModel *pSignalKModel= nullptr;
-    //std::vector<DataProvider *> *pItems=NULL;
-    std::map<std::string, DataProvider *> providers;
+    virtual DataThread *onCreate(bool enabled, std::string id, std::string type, nlohmann::json options);
 };
 
 
