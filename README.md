@@ -45,7 +45,7 @@ The SignalK web API are available on http://localhost:3000/signalk :
           ]
         ]
       ],
-      "servers": {
+      "server": {
         "id": "signalk-server-cpp",
         "version": "0.1.0"
       }
@@ -55,38 +55,60 @@ Example of configuration file:
 
     {
       "vessel": {
-        "name": "Sarima V",
-        "brand": "XYachts",
-        "type": "362 Sport",
-        "uuid": "urn:mrn:signalk:uuid:705f5f1a-efaf-44aa-9cb8-a0fd6305567c",
-    
-        "dimensions": {
-          "length": 10.72,
-          "width": 3.48,
-          "mast": 17,
-          "depthTransducer": 0.5,
-          "keel": 2.05
-        }
-      },
-    
-      "interfaces": {},
-    
-      "providers": [
-        { "id":"FileNMEA0183", "type":"providers/nmea0183/filestream", "enabled":false,
-          "options":{
-            "path":"/Users/raffaelemontella/CLionProjects/signalk-server-cpp/samples/SarimaV-20060114.nmea",
-            "millis":1000
+          "name": "Sarima V",
+          "brand": "XYachts",
+          "type": "362 Sport",
+          "uuid": "urn:mrn:signalk:uuid:705f5f1a-efaf-44aa-9cb8-a0fd6305567c",
+      
+          "dimensions": {
+            "length": 10.72,
+            "width": 3.48,
+            "mast": 17,
+            "depthTransducer": 0.5,
+            "keel": 2.05
           }
         },
-        { "id":"SerialNMEA0183", "type":"providers/nmea0183/serial", "enabled":true,
-          "options":{
-            "device":"/dev/cu.usbserial",
-            "baud":4800,
-            "bytesize":8,
-            "parity": "none",
-            "stopbits": 1
+      
+        "interfaces": {},
+      
+        "servers": [
+          { "id":"signalk-web", "type":"servers/signalk/web", "enabled":true,
+            "options":{
+              "bind":"localhost",
+              "port":3000,
+              "root":"/Users/raffaelemontella/CLionProjects/signalk-server-cpp/www/"
+            }
+          },
+          { "id":"signalk-tcpip", "type":"servers/signalk/tcpip", "enabled":false,
+            "options":{
+              "bind":"localhost",
+              "port":55555
+            }
+          },
+          { "id":"signalk-tcpip", "type":"servers/nmea0183/tcpip", "enabled":false,
+            "options":{
+              "bind":"localhost",
+              "port":10110
+            }
           }
-        }
-      ]
+        ],
+      
+        "providers": [
+          { "id":"FileNMEA0183", "type":"providers/nmea0183/filestream", "enabled":true,
+            "options":{
+              "path":"/Users/raffaelemontella/CLionProjects/signalk-server-cpp/samples/SarimaV-20060114.nmea",
+              "millis":250
+            }
+          },
+          { "id":"SerialNMEA0183", "type":"providers/nmea0183/serial", "enabled":false,
+            "options":{
+              "device":"/dev/cu.usbserial",
+              "baud":4800,
+              "bytesize":8,
+              "parity": "none",
+              "stopbits": 1
+            }
+          }
+        ]
     }
 
