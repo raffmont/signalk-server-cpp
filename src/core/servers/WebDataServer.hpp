@@ -12,6 +12,14 @@
 #include <string>
 #include <fstream>
 #include <streambuf>
+#include <vector>
+#include <iostream>
+#include <sstream>
+#include <random>
+#include <climits>
+#include <algorithm>
+#include <functional>
+
 
 class WebDataServer : public SignalKDataServer {
 public:
@@ -35,8 +43,8 @@ private:
     int port=3000;
 
     static bool hasEnding (std::string const &fullString, std::string const &ending);
-    static std::vector<char> readAllBytes(std::string filename);
-
+    static unsigned char random_char();
+    static std::string generate_hex(const unsigned int len);
 };
 
 

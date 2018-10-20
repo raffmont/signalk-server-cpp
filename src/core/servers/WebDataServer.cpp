@@ -101,11 +101,13 @@ void WebDataServer::onRun(){
             auto *subscriptions=new std::vector<nlohmann::json*>();
             ws->setUserData(subscriptions);
 
+            std::string tag=getId()+generate_hex(16);
+
             nlohmann::json *subscription= nullptr;
             if (url.find("subscribe=all")!=std::string::npos) {
                 subscription= new nlohmann::json(
                     {
-                        {"_tag",getId()},
+                        {"_tag",tag},
                         { "context", "*"},
                         { "subscribe", { "*" }}
                     }
@@ -117,7 +119,7 @@ void WebDataServer::onRun(){
             } else {
                 subscription = new nlohmann::json(
                     {
-                        {"_tag",getId()},
+                        {"_tag",tag},
                         {"context",   "vessels." + pSignalKModel->getSelf()},
                         {"subscribe", {"*"}}
                     }
@@ -181,15 +183,21 @@ bool WebDataServer::hasEnding (std::string const &fullString, std::string const 
     }
 }
 
-std::vector<char> WebDataServer::readAllBytes(std::string filename)
-{
-    std::ifstream ifs(filename, std::ios::binary|std::ios::ate);
-    std::ifstream::pos_type pos = ifs.tellg();
+unsigned char WebDataServer::random_char() {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, 255);
+    return static_cast<unsigned char>(dis(gen));
+}
 
-    std::vector<char> result(pos);
-
-    ifs.seekg(0, std::ios::beg);
-    ifs.read(&result[0], pos);
-
-    return result;
+std::string WebDataServer::generate_hex(const unsigned int len) {
+    std::stringstream ss;
+    for(auto i = 0; i < len; i++) {
+        auto rc = random_char();
+        std::stringstream hexstream;
+        hexstream << std::hex << int(rc);
+        auto hex = hexstream.str();
+        ss << (hex.length() < 2 ? '0' + hex : hex);
+    }
+    return ss.str();
 }
