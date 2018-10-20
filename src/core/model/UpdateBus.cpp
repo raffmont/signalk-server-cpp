@@ -16,7 +16,6 @@ void SignalK::UpdateBus::unsubscribe(nlohmann::json key) {
 void SignalK::UpdateBus::publish(nlohmann::json update) {
     std::string updateContext=update["context"];
     for (auto subscription : subscriptions) {
-
         try {
             nlohmann::json key=subscription.first;
             std::string subscriptionContext=key["context"];
