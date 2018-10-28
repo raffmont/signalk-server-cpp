@@ -278,11 +278,11 @@ namespace SignalK {
 
     }
 
-    std::string Node::toJson() {
+    nlohmann::json Node::toJson() {
         std::ostringstream s1;
         toJson(s1);
         nlohmann::json j = nlohmann::json::parse(s1.str());
-        return j.dump(4);
+        return j;
     }
 
     void Node::replaceChild(std::string key, Node *child) {

@@ -44,7 +44,7 @@ namespace SignalK {
         std::string safeSourceUpdate(std::string label, std::string type, std::string timestamp, const std::list<std::pair<std::string, mpark::variant<std::string, double, bool>>>& attributes);
         bool SameValue(Node *other);
         void toJson(std::ostream& stream);
-        std::string toJson();
+        nlohmann::json toJson();
         void replaceChild(std::string key, Node* child);
         bool addChild(std::string key, Node* child);
         bool removeChild(std::string key);
