@@ -64,6 +64,8 @@ void TcpIpSignalKDataServer::onRun(){
         //pHello=nullptr;
 
 
+
+        /*
         std::shared_ptr<std::vector<nlohmann::json*>> uData=std::make_shared<std::vector<nlohmann::json*>>();
         client->data(uData);
         std::vector<nlohmann::json*> *subscriptions=(std::vector<nlohmann::json*> *)uData.get();
@@ -85,6 +87,7 @@ void TcpIpSignalKDataServer::onRun(){
         });
 
         subscriptions->push_back(subscription);
+         */
 
 
         client->on<uvw::DataEvent>([this](const uvw::DataEvent &event, uvw::TcpHandle &handle) {
@@ -98,6 +101,7 @@ void TcpIpSignalKDataServer::onRun(){
                 if (jMessage["context"] && jMessage["subscribe"]) {
                     jMessage["tag"]=getId();
                     auto uData=handle.data();
+                    /*
                     std::vector<nlohmann::json*> *subscriptions=(std::vector<nlohmann::json*> *)uData.get();
                     nlohmann::json *subscription = new nlohmann::json(jMessage);
 
@@ -114,6 +118,7 @@ void TcpIpSignalKDataServer::onRun(){
                     });
 
                     subscriptions->push_back(subscription);
+                     */
 
                 }
             } catch (nlohmann::detail::parse_error &exception) {
@@ -125,12 +130,14 @@ void TcpIpSignalKDataServer::onRun(){
         client->on<uvw::EndEvent>([this](const uvw::EndEvent &, uvw::TcpHandle &handle) {
 
             auto uData=handle.data();
+            /*
             std::vector<nlohmann::json*> *subscriptions=(std::vector<nlohmann::json*> *)uData.get();
             std::for_each(subscriptions->begin(),subscriptions->end(),[this](nlohmann::json *subscription) {
                 pSignalKModel->getUpdateBus()->unsubscribe(*subscription);
                 delete subscription;
             });
             delete subscriptions;
+             */
 
             handle.data(nullptr);
 
