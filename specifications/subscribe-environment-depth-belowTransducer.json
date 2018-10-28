@@ -1,0 +1,8 @@
+{
+  "context": "vessels.self",
+  "subscribe": [
+    {
+      "path": "environment.depth.belowTransducer"
+    }
+  ]
+}

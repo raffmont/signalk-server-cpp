@@ -1,0 +1,6 @@
+{
+  "context": "*",
+  "subscribe": [
+    {"path": "*"}
+  ]
+}
