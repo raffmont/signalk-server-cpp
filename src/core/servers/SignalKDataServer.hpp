@@ -7,8 +7,27 @@
 
 
 #include "DataServer.hpp"
+#include "../model/Subscriptions.hpp"
+#include <algorithm>
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class SignalKDataServer : public DataServer {
+public:
+    SignalKDataServer();
+    SignalKDataServer(bool enabled,std::string id,SignalK::SignalKModel *pSignalKModel);
+    SignalKDataServer(bool enabled,std::string id,SignalK::SignalKModel *pSignalKModel, nlohmann::json options);
+    ~SignalKDataServer();
+
+    void parse(nlohmann::json jMessage);
+    SignalK::Subscriptions *getSubscriptions() { return pSubscriptions; }
+private:
+    SignalK::Subscriptions *pSubscriptions;
+
 
 };
 

@@ -25,6 +25,7 @@ class WebDataServer : public SignalKDataServer {
 public:
 
     const std::string SIGNALK="/signalk";
+    const std::string PLUGINS="/plugins";
     const std::string SIGNALK_V1_STREAM="/signalk/v1/stream";
     const std::string SIGNALK_V1_API="/signalk/v1/api/";
 

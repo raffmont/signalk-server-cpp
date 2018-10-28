@@ -14,7 +14,7 @@ DataServer::DataServer(bool enabled,std::string id,SignalK::SignalKModel *pSigna
     this->pSignalKModel=pSignalKModel;
 }
 
-DataServer::DataServer(bool enabled,std::string id,SignalK::SignalKModel *pSignalKModel, nlohmann::json options) {
+DataServer::DataServer(bool enabled,std::string id,SignalK::SignalKModel *pSignalKModel, nlohmann::json options):DataServer(enabled,id,pSignalKModel) {
 }
 
 DataServer::~DataServer() {

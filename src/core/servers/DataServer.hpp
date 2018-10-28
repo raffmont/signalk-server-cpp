@@ -21,6 +21,8 @@ public:
     DataServer(bool enabled,std::string id,SignalK::SignalKModel *pSignalKModel, nlohmann::json options);
     virtual ~DataServer();
 
+
+
 };
 
 

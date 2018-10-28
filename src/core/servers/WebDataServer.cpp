@@ -6,11 +6,8 @@
 
 
 
-WebDataServer::WebDataServer(bool enabled,std::string id,SignalK::SignalKModel *pSignalKModel,  std::string bind, int port, std::string root) {
-    this->enabled=enabled;
+WebDataServer::WebDataServer(bool enabled,std::string id,SignalK::SignalKModel *pSignalKModel,  std::string bind, int port, std::string root):SignalKDataServer(enabled,id,pSignalKModel) {
     this->type="servers/signalk/web";
-    this->id=id;
-    this->pSignalKModel=pSignalKModel;
     this->port=port;
     this->root=root;
 }
@@ -23,27 +20,44 @@ WebDataServer::~WebDataServer() {
 
 void WebDataServer::onRun(){
 
+    /*
+     * 1. GET /signalk
+     * {"endpoints":{"v1":{"version":"1.7.1","signalk-http":"http://localhost:3000/signalk/v1/api/","signalk-ws":"ws://localhost:3000/signalk/v1/stream","signalk-tcp":"tcp://localhost:3858"}},"server":{"id":"signalk-server-node","version":"1.7.1"}}
+     *
+     * 2. GET /signalk/v1/api/self
+     * "vessels.urn:mrn:signalk:uuid:c0d79334-4e25-4245-8892-54e8ccc8021d"
+     *
+     * 3. GET /plugins
+     * [..]
+     *
+     * 4. GET /signalk/v1/api/
+     * {"vessels":
+     */
 
 
     // httpRequest borde vara defaultsatt till att hantera upgrades, ta bort onupgrade! (sätter man request avsätts upgrade handlern)
     h.onHttpRequest([this](uWS::HttpResponse *res, uWS::HttpRequest req, char *data, size_t length, size_t remainingBytes) {
         std::string url = req.getUrl().toString();
-        spdlog::get("console")->debug("Request: {0}",url);
+        spdlog::get("console")->info("Request: {0}",url);
         if (url == SIGNALK_V1_STREAM) {
 
         } else if (url.find(SIGNALK_V1_API)!=std::string::npos) {
             std::string path=url;
             path.erase(0,SIGNALK_V1_API.length());
             std::replace( path.begin(), path.end(), '/', '.');
-            std::string signalk=pSignalKModel->subtree(path);
+            std::string signalk=pSignalKModel->subtree(path).dump();
             res->end((char *) signalk.c_str(), signalk.length());
             return;
 
         } else if (url==SIGNALK) {
-            std::string signalk=pSignalKModel->getSignalK(bind,port).dump(2);
+            std::string signalk=pSignalKModel->getSignalK(bind,port).dump();
             res->end((char *) signalk.c_str(), signalk.length());
             return;
-        } else {
+        } else if (url==PLUGINS) {
+            std::string plugins=pSignalKModel->getPlugins().dump();
+            res->end((char *) plugins.c_str(), plugins.length());
+            return;
+        }else {
             spdlog::get("console")->info("WebDataServer/onHttpRequest: url:{0}",url);
             std::string path=url;
             if (path=="" || path[path.length()-1]=='/') {
@@ -67,76 +81,74 @@ void WebDataServer::onRun(){
 
     h.onMessage(
             [this](uWS::WebSocket<uWS::SERVER> *ws, char *message, size_t length, uWS::OpCode x) {
-                std::string msg(message, length);
-                spdlog::get("console")->debug("{0} {1} - Message",ws->getAddress().address,ws->getAddress().port);
 
-                std::string sMessage=std::string(message,length);
+                // Create a message string
+                std::string sMessage(message, length);
+
+                // Get the pointer to the client id
+                auto *pTag = (std::string *) (ws->getUserData());
+
+                // Show info on console
+                spdlog::get("console")->debug("{0} {1} {2} - Message",*pTag,ws->getAddress().address,ws->getAddress().port);
+
+
+
                 try {
+                    // Try to parse the message
                     nlohmann::json jMessage = nlohmann::json::parse(sMessage);
-                    if (jMessage["context"] && jMessage["subscribe"]) {
-                        jMessage["tag"]=getId();
-                        auto *subscriptions = (std::vector<nlohmann::json *> *) (ws->getUserData());
-                        auto *subscription = new nlohmann::json(jMessage);
 
-                        pSignalKModel->getUpdateBus()->subscribe(*subscription, [ws](nlohmann::json update) {
-                            spdlog::get("console")->debug("{0} - onUpdate", update.dump());
-                            std::string updateString = update.dump();
-                            ws->send(updateString.c_str(), updateString.size(), uWS::OpCode::TEXT);
-                        });
+                    // Manage the subscription
+                    getSubscriptions()->parse(*pTag,jMessage,[ws](nlohmann::json update) {
+                        std::string updateString = update.dump();
 
-                        subscriptions->push_back(subscription);
-                    }
+                        spdlog::get("console")->info("{0} - onUpdate", updateString);
+
+                        ws->send(updateString.c_str(), updateString.size(), uWS::OpCode::TEXT);
+                    });
+
+
                 } catch (nlohmann::detail::parse_error &exception) {
                     spdlog::get("console")->error("WebDataServer: {0}",exception.what());
                 }
             });
 
     h.onConnection([this](uWS::WebSocket<uWS::SERVER> *ws, uWS::HttpRequest httpRequest) {
+
+        // Get the requested url
         std::string url = httpRequest.getUrl().toString();
-        spdlog::get("console")->debug("{0} {1} {2} - Connected",ws->getAddress().address,ws->getAddress().port, url);
+
+        // Show on console
+        spdlog::get("console")->info("{0} {1} {2} - Connected",ws->getAddress().address,ws->getAddress().port, url);
 
         if (url.find(SIGNALK_V1_STREAM)!=std::string::npos) {
-            std::string hello = pSignalKModel->getHello().dump();
-            ws->send(hello.c_str(), hello.size(), uWS::OpCode::TEXT);
-            auto *subscriptions=new std::vector<nlohmann::json*>();
-            ws->setUserData(subscriptions);
 
-            std::string tag=getId()+generate_hex(16);
+            // Generate a random id
+            auto *pTag=new std::string(getId()+"|"+generate_hex(16));
 
-            nlohmann::json *subscription= nullptr;
-            if (url.find("subscribe=all")!=std::string::npos) {
-                subscription= new nlohmann::json(
-                    {
-                        {"_tag",tag},
-                        { "context", "*"},
-                        { "subscribe", { "*" }}
-                    }
-                );
+            // Set the id as user data
+            ws->setUserData(pTag);
 
-            } else
-            if (url.find("subscribe=none")!=std::string::npos) {
+            // Check is it
+            if (url.find("subscribe=none")==std::string::npos) {
+                // Create a none subscription
+                nlohmann::json jMessage;
 
-            } else {
-                subscription = new nlohmann::json(
-                    {
-                        {"_tag",tag},
-                        {"context",   "vessels." + pSignalKModel->getSelf()},
-                        {"subscribe", {"*"}}
-                    }
-                );
-            }
+                if (url.find("subscribe=all") != std::string::npos) {
+                    jMessage = nlohmann::json::parse(
+                            R"({"context": "*","subscribe": [{"path": "*" }]})");
+                } else {
+                    jMessage = nlohmann::json::parse(
+                            R"({"context": "vessels.self","subscribe": [{"path": "*" }]})");
+                }
 
-
-            if (subscription!= nullptr) {
-
-                pSignalKModel->getUpdateBus()->subscribe(*subscription, [ws](nlohmann::json update) {
-                    spdlog::get("console")->debug("{0} - onUpdate", update.dump());
+                // Manage the subscription
+                getSubscriptions()->parse(*pTag, jMessage, [ws](nlohmann::json update) {
                     std::string updateString = update.dump();
+
+                    spdlog::get("console")->info("{0} - onUpdate", updateString);
+
                     ws->send(updateString.c_str(), updateString.size(), uWS::OpCode::TEXT);
                 });
-
-                subscriptions->push_back(subscription);
-                spdlog::get("console")->debug("subscription: {0}",subscription->dump(2));
             }
 
         } else {
@@ -145,15 +157,21 @@ void WebDataServer::onRun(){
     });
 
     h.onDisconnection([this](uWS::WebSocket<uWS::SERVER> *ws, int code, char *message, size_t length) {
-        auto *subscriptions = (std::vector<nlohmann::json*> *) (ws->getUserData());
-        std::for_each(subscriptions->begin(),subscriptions->end(),[this](nlohmann::json *subscription) {
-            pSignalKModel->getUpdateBus()->unsubscribe(*subscription);
-            delete subscription;
-        });
-        delete subscriptions;
 
+        // Get the pointer to the client id
+        auto *pTag = (std::string *) (ws->getUserData());
+
+        // Remove all subscriptions
+        getSubscriptions()->removeAll(*pTag);
+
+        // Delete the tag
+        delete pTag;
+
+        // Set the user data as null
         ws->setUserData(nullptr);
-        spdlog::get("console")->debug("{0} {1} - Disconnected",ws->getAddress().address,ws->getAddress().port);
+
+        // Show on console
+        spdlog::get("console")->info("{0} {1} - Disconnected",ws->getAddress().address,ws->getAddress().port);
     });
 
     std::thread tHeartBeat([this](){
