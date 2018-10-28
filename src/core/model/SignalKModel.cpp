@@ -76,27 +76,32 @@ std::string SignalK::SignalKModel::toJson()
     if (root == nullptr) return std::string();
     else return root->toJson();
 }
-std::string SignalK::SignalKModel::subtree(std::string path)
+nlohmann::json SignalK::SignalKModel::subtree(std::string path)
 {
     if(root==nullptr) return std::string("");
     Node * res = nullptr;
-    if (path == "") {
+    if (path.empty()) {
         res= root->safeCopy();
     }
     else
         res = root->safeSubtree(path);
     if (res == nullptr) return  std::string("");
     auto fres = res->toJson();
-    if (res == nullptr) delete res;
+    //if (res == nullptr) delete res;
+
+
+
     return fres;
 
 }
 
 nlohmann::json SignalK::SignalKModel::getHello() {
     nlohmann::json hello={
+        {"name","signalk-dynamo-server"},
         {"version", getVersion()},
         {"timestamp", currentISO8601TimeUTC()},
-        {"self", getSelf()}
+        {"self", "vessels."+getSelf()},
+        {"roles",{ "master","main"}}
     };
     return hello;
 }
@@ -105,23 +110,30 @@ nlohmann::json SignalK::SignalKModel::getSignalK(std::string bind, int port) {
     nlohmann::json signalk={
         {
             "endpoints",
-                {"v1",
-                    {
-                            {"version", "1.0.0",
-                                    {"signalk-http", "http://localhost:3000/signalk/v1/api/"},
-                                    {"signalk-ws", "ws://localhost:3000/signalk/v1/stream"}
-                            }
+                {
+                    {"v1",
+                         {
+                                 {"version", getVersion()} ,
+                                 {"signalk-http", "http://" + bind + ":" + std::to_string(port) + "/signalk/v1/api/"},
+                                 {"signalk-ws","ws://" + bind + ":" + std::to_string(port) + "/signalk/v1/stream"}
+
+                         }
                     }
                 }
         },
         {
             "server", {
-                 {"id", "signalk-servers-cpp"},
+                 {"id", "signalk-dynamo-server"},
                  {"version", getVersion()}
             }
         }
+
     };
     return signalk;
+}
+
+nlohmann::json SignalK::SignalKModel::getPlugins() {
+    return nlohmann::json::array();
 }
 
 std::string SignalK::SignalKModel::getVersion()
@@ -151,7 +163,7 @@ bool SignalK::SignalKModel::update(std::string update)
         nlohmann::json js = nlohmann::json::parse(update);
         bool fres = this->update(js);
         return fres;
-    } catch (std::exception ex) {
+    } catch (std::exception &ex) {
         return false;
     }
 }
@@ -171,7 +183,7 @@ bool SignalK::SignalKModel::update(nlohmann::json js)
             ctx = t;
         }
         else ctx = "";
-        if (ctx == "") ctx = "vessels."+getSelf();
+        if (ctx.empty()) ctx = "vessels."+getSelf();
 
         nlohmann::json jUpdates = js["updates"];
         if (!jUpdates.is_array()) return false;
@@ -180,13 +192,13 @@ bool SignalK::SignalKModel::update(nlohmann::json js)
         for (auto &el : jUpdates)
         {
             auto jTimestamp = el["timestamp"];
-            std::string timestamp = "";
+            std::string timestamp;
             if (jTimestamp.is_string())
             {
                 std::string tmp = jTimestamp;
                 timestamp = tmp;
             }
-            if (timestamp == "") {
+            if (timestamp.empty()) {
                 allUpdatePos.push_back(updatePos);
                 updatePos++;
                 continue;
@@ -197,8 +209,8 @@ bool SignalK::SignalKModel::update(nlohmann::json js)
                 updatePos++;
                 continue;
             }
-            std::string label = "";
-            std::string type = "";
+            std::string label;
+            std::string type;
             std::list<std::pair<std::string, mpark::variant<std::string, double, bool>>> attributes;
             for (auto& attribute : jSource.items())
             {
@@ -219,7 +231,7 @@ bool SignalK::SignalKModel::update(nlohmann::json js)
                                                          Node::jsonToVariant(attribute.value())));
                 }
             }
-            if (label == "") {
+            if (label.empty()) {
                 allUpdatePos.push_back(updatePos);
                 updatePos++;
                 continue;
@@ -256,7 +268,7 @@ bool SignalK::SignalKModel::update(nlohmann::json js)
                     continue;
                 }
                 std::string path = mpark::get<0>(pathNode->value);
-                if (path == "") continue;
+                if (path.empty()) continue;
                 curr->removeChild("path");
                 curr->addChild("timestamp", new Node(timestamp));
                 curr->addChild("$source", new Node(sourceReference));
@@ -289,7 +301,7 @@ bool SignalK::SignalKModel::update(nlohmann::json js)
         }
         return fres;
     }
-    catch (std::exception ex)
+    catch (std::exception &ex)
     {
         return false;
     }
@@ -331,3 +343,5 @@ std::string SignalK::SignalKModel::currentISO8601TimeUTC() {
     ss << std::put_time(gmtime(&itt), "%FT%TZ");
     return ss.str();
 }
+
+

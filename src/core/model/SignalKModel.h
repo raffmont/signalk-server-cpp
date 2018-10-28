@@ -46,11 +46,12 @@ namespace SignalK {
         void load(const std::string& json, bool flatten=false, bool strict = false);
         void load(std::istream& input, bool flatten=false, bool strict = false);
         std::string toJson();
-        std::string subtree(std::string path);
+        nlohmann::json subtree(std::string path);
         std::string getVersion();
         std::string getSelf();
         nlohmann::json getHello();
         nlohmann::json getSignalK(std::string bind, int port);
+        nlohmann::json getPlugins();
         std::string getSource(std::string id) {
             return subtree("sources." + id);
         }
@@ -62,6 +63,7 @@ namespace SignalK {
         std::string readUpdate(std::istream& input);
         std::string currentISO8601TimeUTC();
         UpdateBus *getUpdateBus() { return bus; }
+
     protected:
         friend std::ostream& operator<< (std::ostream& os, const SignalKModel& dt);
         Node* root;
