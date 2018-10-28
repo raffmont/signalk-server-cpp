@@ -7,21 +7,24 @@
 
 
 #include <string>
+#include <regex>
 #include <spdlog/spdlog.h>
 #include <nlohmann/json.hpp>
+#include "Subscription.hpp"
+
 
 namespace SignalK {
 
     class UpdateBus {
     public:
-        void subscribe(nlohmann::json key, std::function<void(nlohmann::json)> f);
+        void subscribe(Subscription * pSubscription, std::function<void(nlohmann::json)> f);
 
-        void unsubscribe(nlohmann::json key);
+        void unsubscribe(Subscription * pSubscription);
 
         void publish(nlohmann::json update);
 
     private:
-        std::map<nlohmann::json, std::function<void(nlohmann::json)>> subscriptions;
+        std::map<Subscription *, std::function<void(nlohmann::json)>> subscriptions;
     };
 
 }
