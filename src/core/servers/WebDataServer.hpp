@@ -7,6 +7,7 @@
 
 
 #include <uWS/Hub.h>
+#include "../utils/String.hpp"
 #include "../model/SignalKModel.h"
 #include "SignalKDataServer.hpp"
 #include <string>
@@ -42,10 +43,6 @@ private:
     std::string root="www";
     std::string bind="localhost";
     int port=3000;
-
-    static bool hasEnding (std::string const &fullString, std::string const &ending);
-    static unsigned char random_char();
-    static std::string generate_hex(const unsigned int len);
 };
 
 

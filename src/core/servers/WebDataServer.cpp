@@ -39,36 +39,74 @@ void WebDataServer::onRun(){
     h.onHttpRequest([this](uWS::HttpResponse *res, uWS::HttpRequest req, char *data, size_t length, size_t remainingBytes) {
         std::string url = req.getUrl().toString();
         spdlog::get("console")->info("Request: {0}",url);
+
+        // Check if the url is equals to /signalk/v1/stream
         if (url == SIGNALK_V1_STREAM) {
 
-        } else if (url.find(SIGNALK_V1_API)!=std::string::npos) {
+        } else if (url.find(SIGNALK_V1_API)!=std::string::npos) { // Check if the url is equal to /signalk/v1/api/
+
+            // Copy the url in path
             std::string path=url;
+
+            // Erase the trailing URL
             path.erase(0,SIGNALK_V1_API.length());
-            std::replace( path.begin(), path.end(), '/', '.');
+
+
+            // Replace all / with .
+            path=Utils::String::replace(path,"/",".");
+
+            // Replace the self reference with the actual one
+            path=Utils::String::replace(path,"vessels.self","vessels."+pSignalKModel->getSelf());
+
+            // Perform the query on the SignalK document
             std::string signalk=pSignalKModel->subtree(path).dump();
+
+            // End the request
             res->end((char *) signalk.c_str(), signalk.length());
             return;
 
-        } else if (url==SIGNALK) {
+        } else if (url==SIGNALK) { // Check if the url is equal to /signalk
+
+            // Get the server hello message
             std::string signalk=pSignalKModel->getSignalK(bind,port).dump();
+
+            // End the request
             res->end((char *) signalk.c_str(), signalk.length());
             return;
-        } else if (url==PLUGINS) {
+        } else if (url==PLUGINS) { // Check if the url is equal to /plugins
+
+            // Get the server plugin manifest
             std::string plugins=pSignalKModel->getPlugins().dump();
+
+            // End the request
             res->end((char *) plugins.c_str(), plugins.length());
             return;
         }else {
+            // The url represents an internal resource
             spdlog::get("console")->info("WebDataServer/onHttpRequest: url:{0}",url);
+
+            // Copy the path
             std::string path=url;
-            if (path=="" || path[path.length()-1]=='/') {
+
+            // Check if the path is empty or is just the root
+            if (path=="" || Utils::String::endsWith(path,"/")) {
+                // Add to the path the default document
                 path=path+"index.html";
             }
+
+            // Compose the file system local path
             std::string localPath=root+"/"+path;
+
             spdlog::get("console")->info("WebDataServer/onHttpRequest: localPath:{0}",localPath);
 
+            // Try to read the rosource
             try {
                 std::stringstream document;
+
+                // Read the resource
                 document << std::ifstream (localPath).rdbuf();
+
+                // End the request
                 res->end(document.str().data(), document.str().size());
 
             } catch (std::exception &ex) {
@@ -123,7 +161,7 @@ void WebDataServer::onRun(){
         if (url.find(SIGNALK_V1_STREAM)!=std::string::npos) {
 
             // Generate a random id
-            auto *pTag=new std::string(getId()+"|"+generate_hex(16));
+            auto *pTag=new std::string(getId()+"|"+Utils::String::generate_hex(16));
 
             // Set the id as user data
             ws->setUserData(pTag);
@@ -193,29 +231,5 @@ void WebDataServer::onRun(){
     spdlog::get("console")->debug("WebDataServer/ENDED: ws://{0}:{1}",bind,port);
 }
 
-bool WebDataServer::hasEnding (std::string const &fullString, std::string const &ending) {
-    if (fullString.length() >= ending.length()) {
-        return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
-    } else {
-        return false;
-    }
-}
 
-unsigned char WebDataServer::random_char() {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(0, 255);
-    return static_cast<unsigned char>(dis(gen));
-}
 
-std::string WebDataServer::generate_hex(const unsigned int len) {
-    std::stringstream ss;
-    for(auto i = 0; i < len; i++) {
-        auto rc = random_char();
-        std::stringstream hexstream;
-        hexstream << std::hex << int(rc);
-        auto hex = hexstream.str();
-        ss << (hex.length() < 2 ? '0' + hex : hex);
-    }
-    return ss.str();
-}
