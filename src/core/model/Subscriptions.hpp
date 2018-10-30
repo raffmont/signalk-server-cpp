@@ -7,6 +7,7 @@
 
 
 #include <string>
+#include "../utils/String.hpp"
 #include "SignalKModel.h"
 #include "Subscription.hpp"
 
@@ -22,7 +23,7 @@ namespace SignalK {
         void removeAll(std::string tag);
 
     private:
-        bool replace(std::string& str, const std::string& from, const std::string& to);
+
 
         SignalK::SignalKModel *pSignalKModel;
         std::map<std::string, Subscription *> items;

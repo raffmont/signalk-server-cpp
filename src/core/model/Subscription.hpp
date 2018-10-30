@@ -6,6 +6,7 @@
 #define SIGNALK_SERVER_CPP_SUBSCRIPTION_HPP
 
 
+#include "../utils/String.hpp"
 #include <nlohmann/json.hpp>
 #include <string>
 #include <regex>
@@ -28,8 +29,7 @@ namespace SignalK {
         std::string path;
         std::regex regex;
 
-        std::string replaceString(std::string subject, const std::string& search,
-                                                         const std::string& replace);
+
     };
 
 }

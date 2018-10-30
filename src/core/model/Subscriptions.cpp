@@ -12,20 +12,14 @@ SignalK::Subscriptions::~Subscriptions() {
 
 }
 
-bool SignalK::Subscriptions::replace(std::string& str, const std::string& from, const std::string& to) {
-    size_t start_pos = str.find(from);
-    if(start_pos == std::string::npos)
-        return false;
-    str.replace(start_pos, from.length(), to);
-    return true;
-}
+
 void SignalK::Subscriptions::parse(std::string tag, nlohmann::json jMessage, std::function<void(nlohmann::json)> f) {
 
     // Get the context
     std::string context=jMessage["context"];
 
     // Substitute self with the actual uuid
-    replace(context,"self",pSignalKModel->getSelf());
+    Utils::String::replace(context,"self",pSignalKModel->getSelf());
 
     // Check if subscribe is present and it is an array
     if (jMessage["subscribe"].is_array()) {

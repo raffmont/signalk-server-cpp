@@ -10,8 +10,8 @@ SignalK::Subscription::Subscription(std::string context, nlohmann::json subscrib
     this->path=path;
 
     // Escape the regex chars
-    std::string subscriptionString=replaceString(context+"."+path,".","[.]");
-    subscriptionString=replaceString(subscriptionString,"*",".*");
+    std::string subscriptionString=Utils::String::replace(context+"."+path,".","[.]");
+    subscriptionString=Utils::String::replace(subscriptionString,"*",".*");
 
     // Create the regex
     this->regex=std::regex(subscriptionString);
@@ -22,14 +22,6 @@ std::string SignalK::Subscription::getKey() {
 }
 
 
-std::string SignalK::Subscription::replaceString(std::string subject, const std::string& search,
-                          const std::string& replace) {
-    size_t pos = 0;
-    while ((pos = subject.find(search, pos)) != std::string::npos) {
-        subject.replace(pos, search.length(), replace);
-        pos += replace.length();
-    }
-    return subject;
-}
+
 
 
