@@ -22,10 +22,13 @@ namespace SignalK {
         Node(const Node& other);
         Node(Node&& other);
 
-        Node(std::string strVal);
-        Node(mpark::variant<std::string, double, bool> vVal);
-        Node(double numVal);
-        Node(bool boolVal);
+        explicit Node(std::string strVal);
+
+        explicit Node(mpark::variant<std::string, double, bool> vVal);
+
+        explicit Node(double numVal);
+
+        explicit Node(bool boolVal);
 
         ~Node();
 
@@ -56,13 +59,23 @@ namespace SignalK {
         void AddSync();
 
 
+        // The value of the Node
         mpark::variant<std::string, double, bool> value;
 
     private:
+        // The value name
         static const std::string valueName;
+
+        // The children map
         std::map<std::string, Node *> *children = nullptr;
+
+        // The safeChildrenHandler
         SignalK::ReaderHandler<std::map<std::string, Node *>> *safeChildrenHandler = nullptr;
+
+        // The mutex used to lock the Node while writing
         std::mutex writeLock;
+
+        // Is this a value node?
         bool valueNode = false;
 
     };

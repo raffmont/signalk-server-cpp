@@ -1,3 +1,5 @@
+#include <utility>
+
 //
 // Created by Raffaele Montella on 01/10/2018.
 //
@@ -7,68 +9,164 @@
 
 namespace SignalK {
 
+    /**
+     * Create a Node with a string value
+     *
+     * @param strVal The value
+     *
+     */
     Node::Node(std::string strVal) {
+
+        // Set the value
         value = strVal;
     }
 
+    /**
+     * Create a Node with a variant value
+     *
+     * @param vVal The value
+     *
+     */
     Node::Node(mpark::variant<std::string, double, bool> vVal) {
-        value = vVal;
+        // Set the value
+        value = std::move(vVal);
     }
 
+    /**
+     * Create a Node with a double value
+     *
+     * @param numVal The value
+     *
+     */
     Node::Node(double numVal) {
+
+        // Set the value
         value = numVal;
     }
 
+    /**
+     * Create a Node with a boolean value
+     * @param boolVal
+     */
     Node::Node(bool boolVal) {
+
+        // Set the value
         value = boolVal;
     }
 
+    /**
+     * Create an empty Node - Default constructor
+     *
+     */
     Node::Node() {
+
+        // Set the value as null
         value = nullptr;
+
+        // Add the sync feature
         AddSync();
     }
 
+    /**
+     * Create a Node copying from another one with its hierarchy - Copy constructor
+     *
+     * @param other The other Node
+     *
+     */
     Node::Node(const Node &other) {
+        // Set the node value
         value = other.value;
+
+        // Check if the other Node has children
         if (other.children != nullptr) {
+            // For each children...
             for (auto pair : *other.children)
+                // Add a new children to the Node
                 addChild(pair.first, new Node(*(pair.second)));
         }
-        if (other.safeChildrenHandler != nullptr) AddSync();
+
+        // Check if the other node is threadsafe
+        if (other.safeChildrenHandler != nullptr) {
+            // Add the threadsafeness to the Node
+            AddSync();
+        }
+
+        // Copy the valueNode
         valueNode = other.valueNode;
     }
 
+    /**
+     * Create a Node moving data from another -- Moving constructor
+     *
+     * @param other The other Node
+     *
+     */
     Node::Node(Node && other) {
+
+        // Set the node value
         value = other.value;
+
+        // Set  the children
         children = other.children;
-        other.
-        children = nullptr;
-        other.
-        value = nullptr;
-        if (other.safeChildrenHandler != nullptr)
 
-        AddSync();
+        // Force other children destruction
+        other.children = nullptr;
 
+        // Force other destruction
+        other.value = nullptr;
+
+        // Check if the other node is threadsafe
+        if (other.safeChildrenHandler != nullptr) {
+            // Add the threadsafeness to the Node
+            AddSync();
+        }
+
+        // Copy the valueNode
         valueNode = other.valueNode;
     }
 
 
+    /**
+     * Deallocate the Node and its children -- Destructor
+     */
     Node::~Node() {
-        if (safeChildrenHandler != nullptr) delete safeChildrenHandler;
-        safeChildrenHandler = nullptr;
-        removeAllChildren();
+        // Check if the node is threadsafe
+        if (safeChildrenHandler != nullptr) {
+            // Delete the safeChildrenHandler
+            delete safeChildrenHandler;
+        }
 
+        // Set the safeChildrenHandler to null
+        safeChildrenHandler = nullptr;
+
+        // Remove all children
+        removeAllChildren();
     }
 
+    /**
+     * Check if the Node is a leaf
+     *
+     * @return True if the Node is a leaf
+     */
     inline bool Node::isLeaf() const {
         return children == nullptr;
     }
 
+    /**
+     * Check if the Node represents a value
+     *
+     * @return True if the Node represents a value
+     */
     inline bool Node::isValueNode() const {
         return valueNode;
     }
-
-     std::string Node::valueAsString(mpark::variant<std::string, double, bool> val) {
+    /**
+     * Return a variant as a string
+     *
+     * @param val the variant
+     * @return the string
+     */
+    std::string Node::valueAsString(mpark::variant<std::string, double, bool> val) {
         if (val.index() == 0) return mpark::get<0>(val);
         else if (val.index() == 1) return std::to_string((int) (mpark::get<1>(val) + 0.4));
         else return std::to_string(mpark::get<2>(val));
@@ -223,7 +321,8 @@ namespace SignalK {
             curr = curr->safeNodeProcess(currKey, [pair](Node *n) {
                 n->addChild(pair.first, new Node(pair.second));
             });
-            res = res + "." + currKey;
+            //res = res + "." + currKey;
+            res+=("."+currKey);
         }
         curr->safeChildrenHandler->modify([timestamp](std::map<std::string, Node *> *x) {
             auto t = (*x)["timestamp"];
@@ -278,6 +377,11 @@ namespace SignalK {
 
     }
 
+    /**
+     * Return a nlohmann::json object
+     *
+     * @return The nlohmann::json object
+     */
     nlohmann::json Node::toJson() {
         std::ostringstream s1;
         toJson(s1);
@@ -401,8 +505,15 @@ namespace SignalK {
         valueNode = true;
     }
 
+    /**
+     * Add reading threadsafeness
+     */
     void Node::AddSync() {
+
+        // Check if the safeChildrenHandler is already instanced
         if (safeChildrenHandler == nullptr)
+
+            // Create a new safeChildrenHandler
             safeChildrenHandler =
                 new SignalK::ReaderHandler<std::map<std::string, Node *>>(&children,
                   [this]() -> void { this->removeAllChildren();
