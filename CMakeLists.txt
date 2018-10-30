@@ -171,7 +171,7 @@ add_executable(
         src/core/model/UpdateBus.cpp
         src/core/model/UpdateBus.hpp
         src/core/providers/SerialNMEA0183DataProvider.cpp
-        src/core/providers/SerialNMEA0183DataProvider.hpp src/core/model/Node.cpp src/core/model/Node.hpp src/core/servers/TcpIpSignalKDataServer.cpp src/core/servers/TcpIpSignalKDataServer.hpp src/SignalKServer.cpp src/SignalKServer.hpp src/core/DataThread.cpp src/core/DataThread.hpp src/core/servers/DataServers.cpp src/core/servers/DataServers.hpp src/core/servers/TcpIpNMEA0183DataServer.cpp src/core/servers/TcpIpNMEA0183DataServer.hpp src/core/servers/NMEA0183DataServer.cpp src/core/servers/NMEA0183DataServer.hpp src/core/DataThreads.cpp src/core/DataThreads.hpp src/core/model/Subscription.cpp src/core/model/Subscription.hpp src/core/model/Subscriptions.cpp src/core/model/Subscriptions.hpp)
+        src/core/providers/SerialNMEA0183DataProvider.hpp src/core/model/Node.cpp src/core/model/Node.hpp src/core/servers/TcpIpSignalKDataServer.cpp src/core/servers/TcpIpSignalKDataServer.hpp src/SignalKServer.cpp src/SignalKServer.hpp src/core/DataThread.cpp src/core/DataThread.hpp src/core/servers/DataServers.cpp src/core/servers/DataServers.hpp src/core/servers/TcpIpNMEA0183DataServer.cpp src/core/servers/TcpIpNMEA0183DataServer.hpp src/core/servers/NMEA0183DataServer.cpp src/core/servers/NMEA0183DataServer.hpp src/core/DataThreads.cpp src/core/DataThreads.hpp src/core/model/Subscription.cpp src/core/model/Subscription.hpp src/core/model/Subscriptions.cpp src/core/model/Subscriptions.hpp src/core/utils/String.cpp src/core/utils/String.hpp)
 
 
 # Expicit the dependencies
