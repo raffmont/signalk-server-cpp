@@ -43,6 +43,14 @@ void WebDataServer::onRun(){
         // Check if the url is equals to /signalk/v1/stream
         if (url == SIGNALK_V1_STREAM) {
 
+        } else if (url.find(SIGNALK_V1_API_SELF)!=std::string::npos) { // Check if the url is equal to /signalk/v1/api/
+            // Perform the query on the SignalK document
+            std::string signalk="\"vessels."+pSignalKModel->getSelf()+"\"";
+
+            // End the request
+            res->end((char *) signalk.c_str(), signalk.length());
+            return;
+
         } else if (url.find(SIGNALK_V1_API)!=std::string::npos) { // Check if the url is equal to /signalk/v1/api/
 
             // Copy the url in path

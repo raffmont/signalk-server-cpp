@@ -29,6 +29,7 @@ public:
     const std::string PLUGINS="/plugins";
     const std::string SIGNALK_V1_STREAM="/signalk/v1/stream";
     const std::string SIGNALK_V1_API="/signalk/v1/api/";
+    const std::string SIGNALK_V1_API_SELF="/signalk/v1/api/self";
 
     WebDataServer(bool enabled,std::string id,SignalK::SignalKModel *pSignalKModel, std::string bind, int port, std::string root);
     WebDataServer(bool enabled,std::string id,SignalK::SignalKModel *pSignalKModel, nlohmann::json options);
