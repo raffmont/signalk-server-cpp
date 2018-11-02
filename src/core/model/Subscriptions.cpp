@@ -19,7 +19,7 @@ void SignalK::Subscriptions::parse(std::string tag, nlohmann::json jMessage, std
     std::string context=jMessage["context"];
 
     // Substitute self with the actual uuid
-    Utils::String::replace(context,"self",pSignalKModel->getSelf());
+    context=Utils::String::replace(context,"self",pSignalKModel->getSelf());
 
     // Check if subscribe is present and it is an array
     if (jMessage["subscribe"].is_array()) {
