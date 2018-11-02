@@ -17,6 +17,7 @@ namespace SignalK {
      */
     Node::Node(std::string strVal) {
 
+
         // Set the value
         value = strVal;
     }
@@ -28,6 +29,8 @@ namespace SignalK {
      *
      */
     Node::Node(mpark::variant<std::string, double, bool> vVal) {
+
+
         // Set the value
         value = std::move(vVal);
     }
@@ -40,6 +43,7 @@ namespace SignalK {
      */
     Node::Node(double numVal) {
 
+
         // Set the value
         value = numVal;
     }
@@ -50,6 +54,7 @@ namespace SignalK {
      */
     Node::Node(bool boolVal) {
 
+
         // Set the value
         value = boolVal;
     }
@@ -59,6 +64,7 @@ namespace SignalK {
      *
      */
     Node::Node() {
+
 
         // Set the value as null
         value = nullptr;
@@ -386,6 +392,14 @@ namespace SignalK {
         std::ostringstream s1;
         toJson(s1);
         nlohmann::json j = nlohmann::json::parse(s1.str());
+        try {
+            if (j.at("self").is_string()) {
+                std::string sSelf = j["self"];
+                j["self"] = "vessels." + sSelf;
+            }
+        } catch ( nlohmann::json::exception &ex) {
+
+        }
         return j;
     }
 

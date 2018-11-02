@@ -32,35 +32,34 @@ namespace SignalK {
 
         ~Node();
 
-        bool isLeaf() const;
-        bool isValueNode() const;
 
-        static std::string valueAsString(mpark::variant<std::string, double, bool> val);
-        Node* getChild(const std::string & key) const;
-        Node* safeMove(const std::string & key, bool addIfNotFound = false, const std::string & prevKey = "");
-        Node* safeNodeProcess(const std::string & key, std::function<void(Node*)> updater);
-        Node* safeCopy();
-        Node* safeSubtree(std::string path);
-        bool safeNodeChildrenReplace(std::map<std::string, Node*> * children);
-        bool safeChildrenReplace(std::string path, Node* rep);
-        bool safeChildrenReplace(std::string path, std::map<std::string, Node*> * children);
-        std::string safeSourceUpdate(std::string label, std::string type, std::string timestamp, const std::list<std::pair<std::string, mpark::variant<std::string, double, bool>>>& attributes);
-        bool SameValue(Node *other);
-        void toJson(std::ostream& stream);
-        nlohmann::json toJson();
+
+
         void replaceChild(std::string key, Node* child);
         bool addChild(std::string key, Node* child);
         bool removeChild(std::string key);
         void removeAllChildren();
+
+        static Node* recursiveLoad(const nlohmann::json& json, bool flatten, bool strict);
+
+        Node* safeCopy();
+        Node* safeSubtree(std::string path);
+
+        Node* getChild(const std::string & key) const;
+        bool safeChildrenReplace(std::string path, Node* rep);
+        bool safeChildrenReplace(std::string path, std::map<std::string, Node*> * children);
+        std::string safeSourceUpdate(std::string label, std::string type, std::string timestamp, const std::list<std::pair<std::string, mpark::variant<std::string, double, bool>>>& attributes);
+
         void recursiveOut(std::ostream& os, std::string path) const;
         static mpark::variant<std::string, double, bool>  jsonToVariant(const nlohmann::json& json);
-        static Node* recursiveLoad(const nlohmann::json& json, bool flatten, bool strict);
-        void declareValueNode();
-        void AddSync();
+
+        nlohmann::json toJson();
 
 
         // The value of the Node
         mpark::variant<std::string, double, bool> value;
+
+
 
     private:
         // The value name
@@ -77,6 +76,22 @@ namespace SignalK {
 
         // Is this a value node?
         bool valueNode = false;
+
+        // Reecursively render the data structure in JSON
+        void toJson(std::ostream& stream);
+
+        static std::string valueAsString(mpark::variant<std::string, double, bool> val);
+        Node* safeMove(const std::string & key, bool addIfNotFound = false, const std::string & prevKey = "");
+        Node* safeNodeProcess(const std::string & key, std::function<void(Node*)> updater);
+        bool safeNodeChildrenReplace(std::map<std::string, Node*> * children);
+        bool SameValue(Node *other);
+
+        bool isLeaf() const;
+        bool isValueNode() const;
+
+
+        void declareValueNode();
+        void AddSync();
 
     };
 }
