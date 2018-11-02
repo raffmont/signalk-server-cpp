@@ -5,12 +5,15 @@
 
 #include "ReaderHandler.h"
 #include "SignalKModel.h"
+#include "Node.hpp"
 
 
 using json = nlohmann::json;
 
 
 const std::string SignalK::Node::valueName("value");
+
+
 
 
 SignalK::SignalKModel::SignalKModel()
