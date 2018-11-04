@@ -8,6 +8,7 @@
 
 WebDataServer::WebDataServer(bool enabled,std::string id,SignalK::SignalKModel *pSignalKModel,  std::string bind, int port, std::string root):SignalKDataServer(enabled,id,pSignalKModel) {
     this->type="servers/signalk/web";
+    this->bind=bind;
     this->port=port;
     this->root=root;
 }
