@@ -503,7 +503,7 @@ void NMEA0183DataProvider::parse(std::string label,std::string line) {
                     }
                     // marnav::nmea::checksum_error
                 } catch (std::exception ex3) {
-                    spdlog::get("console")->error("NMEA0183DataProvider: {0} {1}",ex3.what(),line);
+                    //spdlog::get("console")->error("NMEA0183DataProvider: {0} {1}",ex3.what(),line);
                 }
             } catch (std::invalid_argument ex1) {
                 spdlog::get("console")->error("NMEA0183DataProvider: {0} {1}",ex1.what(),line);
