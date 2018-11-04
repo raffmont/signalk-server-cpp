@@ -8,10 +8,11 @@
 #include "TcpIpNMEA0183DataServer.hpp"
 
 TcpIpNMEA0183DataServer::TcpIpNMEA0183DataServer(bool enabled,std::string id,SignalK::SignalKModel *pSignalKModel,  std::string bind, int port) {
-    this->enabled=enabled;
     this->type="servers/nmea0183/tcpip";
     this->id=id;
+    this->enabled=enabled;
     this->pSignalKModel=pSignalKModel;
+    this->bind=bind;
     this->port=port;
 }
 
