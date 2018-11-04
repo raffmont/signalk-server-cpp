@@ -1,6 +1,1 @@
-{
-  "context": "*",
-  "unsubscribe": [
-    {"path": "*"}
-  ]
-}
+{ "context": "*", "unsubscribe": [ {"path": "*"} ] }
