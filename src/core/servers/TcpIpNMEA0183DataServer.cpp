@@ -24,22 +24,22 @@ TcpIpNMEA0183DataServer::~TcpIpNMEA0183DataServer() {
 void TcpIpNMEA0183DataServer::onRun(){
     auto loop = uvw::Loop::getDefault();
 
-    std::shared_ptr<uvw::TcpHandle> tcp = loop->resource<uvw::TcpHandle>();
+    std::shared_ptr<uvw::TCPHandle> tcp = loop->resource<uvw::TCPHandle>();
 
-    tcp->on<uvw::ErrorEvent>([](const uvw::ErrorEvent &, uvw::TcpHandle &) {
+    tcp->on<uvw::ErrorEvent>([](const uvw::ErrorEvent &, uvw::TCPHandle &) {
         std::cout << "error " << std::endl;
     });
 
-    tcp->once<uvw::ListenEvent>([this](const uvw::ListenEvent &, uvw::TcpHandle &srv) {
+    tcp->once<uvw::ListenEvent>([this](const uvw::ListenEvent &, uvw::TCPHandle &srv) {
         std::cout << "listen" << std::endl;
 
-        std::shared_ptr<uvw::TcpHandle> client = srv.loop().resource<uvw::TcpHandle>();
+        std::shared_ptr<uvw::TCPHandle> client = srv.loop().resource<uvw::TCPHandle>();
 
-        client->on<uvw::ErrorEvent>([](const uvw::ErrorEvent &, uvw::TcpHandle &) {
+        client->on<uvw::ErrorEvent>([](const uvw::ErrorEvent &, uvw::TCPHandle &) {
             std::cout << "error " << std::endl;
         });
 
-        client->on<uvw::CloseEvent>([ptr = srv.shared_from_this()](const uvw::CloseEvent &, uvw::TcpHandle &) {
+        client->on<uvw::CloseEvent>([ptr = srv.shared_from_this()](const uvw::CloseEvent &, uvw::TCPHandle &) {
             std::cout << "close" << std::endl;
             ptr->close();
         });
@@ -75,7 +75,7 @@ void TcpIpNMEA0183DataServer::onRun(){
         subscriptions->push_back(subscription);
         */
 
-        client->on<uvw::DataEvent>([this](const uvw::DataEvent &event, uvw::TcpHandle &handle) {
+        client->on<uvw::DataEvent>([this](const uvw::DataEvent &event, uvw::TCPHandle &handle) {
 
             std::string msg(event.data.get(), event.length);
             spdlog::get("console")->info("{0} {1} - Message",handle.sock().ip,handle.sock().port);
@@ -112,7 +112,7 @@ void TcpIpNMEA0183DataServer::onRun(){
 
         });
 
-        client->on<uvw::EndEvent>([this](const uvw::EndEvent &, uvw::TcpHandle &handle) {
+        client->on<uvw::EndEvent>([this](const uvw::EndEvent &, uvw::TCPHandle &handle) {
 
             auto uData=handle.data();
             /*
@@ -137,7 +137,7 @@ void TcpIpNMEA0183DataServer::onRun(){
 
     });
 
-    tcp->once<uvw::CloseEvent>([](const uvw::CloseEvent &, uvw::TcpHandle &) {
+    tcp->once<uvw::CloseEvent>([](const uvw::CloseEvent &, uvw::TCPHandle &) {
         std::cout << "close" << std::endl;
     });
 

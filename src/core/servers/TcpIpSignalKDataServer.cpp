@@ -27,36 +27,36 @@ void TcpIpSignalKDataServer::onRun(){
     auto loop = uvw::Loop::getDefault();
 
     // Create the tcp handler
-    std::shared_ptr<uvw::TcpHandle> tcp = loop->resource<uvw::TcpHandle>();
+    std::shared_ptr<uvw::TCPHandle> tcp = loop->resource<uvw::TCPHandle>();
 
     // Tcp on error event...
-    tcp->on<uvw::ErrorEvent>([](const uvw::ErrorEvent &, uvw::TcpHandle &) {
+    tcp->on<uvw::ErrorEvent>([](const uvw::ErrorEvent &, uvw::TCPHandle &) {
         std::cout << "error " << std::endl;
     });
 
     // Tcp on listen event...
-    tcp->on<uvw::ListenEvent>([this](const uvw::ListenEvent &, uvw::TcpHandle &srv) {
+    tcp->on<uvw::ListenEvent>([this](const uvw::ListenEvent &, uvw::TCPHandle &srv) {
         spdlog::get("console")->info("onRun:tcp->once:ListenEvent/START");
 
         // Create the client handler
-        std::shared_ptr<uvw::TcpHandle> client = srv.loop().resource<uvw::TcpHandle>();
+        std::shared_ptr<uvw::TCPHandle> client = srv.loop().resource<uvw::TCPHandle>();
 
 
         // On error event...
-        client->on<uvw::ErrorEvent>([](const uvw::ErrorEvent &event, uvw::TcpHandle &handle) {
+        client->on<uvw::ErrorEvent>([](const uvw::ErrorEvent &event, uvw::TCPHandle &handle) {
             spdlog::get("console")->info("onRun:client->on:ErrorEvent --:",event.what());
         });
 
 
         // On close event...
-        client->on<uvw::CloseEvent>([ptr = srv.shared_from_this()](const uvw::CloseEvent &, uvw::TcpHandle &handle) {
+        client->on<uvw::CloseEvent>([ptr = srv.shared_from_this()](const uvw::CloseEvent &, uvw::TCPHandle &handle) {
             spdlog::get("console")->info("onRun:client->on:CloseEvent");
             ptr->close();
         });
 
 
         // On end event
-        client->on<uvw::EndEvent>([this](const uvw::EndEvent &, uvw::TcpHandle &handle) {
+        client->on<uvw::EndEvent>([this](const uvw::EndEvent &, uvw::TCPHandle &handle) {
 
             std::shared_ptr<std::string> uData=handle.data<std::string>();
             std::string tag=*uData.get();
@@ -74,7 +74,7 @@ void TcpIpSignalKDataServer::onRun(){
         });
 
         // On data event...
-        client->on<uvw::DataEvent>([this](const uvw::DataEvent &event, uvw::TcpHandle &handle) {
+        client->on<uvw::DataEvent>([this](const uvw::DataEvent &event, uvw::TCPHandle &handle) {
 
 
 
@@ -127,7 +127,7 @@ void TcpIpSignalKDataServer::onRun(){
 
 
     // On tcp close event
-    tcp->once<uvw::CloseEvent>([](const uvw::CloseEvent &, uvw::TcpHandle &handle) {
+    tcp->once<uvw::CloseEvent>([](const uvw::CloseEvent &, uvw::TCPHandle &handle) {
         spdlog::get("console")->info("onRun:tcp->once:CloseEvent");
         int count = 0;
         handle.loop().walk([&count](uvw::BaseHandle &) { ++count; });
