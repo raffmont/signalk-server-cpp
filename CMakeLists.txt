@@ -6,6 +6,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # TODO: https://developer.android.com/ndk/guides/cmake
 
+if (ANDROID)
+    message(STATUS "Hello from Android build!")
+else()
+    message(STATUS "Not Android")
+endif()
 
 
 # Include the support to external projects
@@ -25,15 +30,34 @@ link_directories(${EXTERNAL_INSTALL_LOCATION}/lib)
 
 # TODO: Add support for STATIC also.
 #find_package(OpenSSL REQUIRED)
-set(OPENSSL_USE_STATIC_LIBS TRUE)
-include(FindOpenSSL)
+if (ANDROID)
+    # https://scottyab.com/2017/05/how-to-build-and-integrate-openssl-into-your-android-ndk-project/
+    # First, I downloaded the prebuild openssl for Android from here: https://github.com/leenjewel/openssl_for_ios_and_android
+    SET(OPENSSL_DIR /Users/sokol/Downloads/openssl-android-libs)
+    
+    add_library(libcrypto STATIC IMPORTED)
+    set_target_properties(libcrypto PROPERTIES IMPORTED_LOCATION ${OPENSSL_DIR}/${ANDROID_ABI}/lib/libcrypto.a)
 
-message("OpenSSL include dir: ${OPENSSL_INCLUDE_DIR}")
-message("OpenSSL libraries: ${OPENSSL_LIBRARIES}")
+    add_library(libssl STATIC IMPORTED)
+    set_target_properties(libssl PROPERTIES IMPORTED_LOCATION ${OPENSSL_DIR}/${ANDROID_ABI}/lib/libssl.a)
 
-include_directories(${OPENSSL_INCLUDE_DIR})
-link_directories(${OPENSSL_LIBRARIES})
-list(APPEND LIB_LIST ${OPENSSL_LIBRARIES})
+    add_library(libcurl STATIC IMPORTED)
+    set_target_properties(libcurl PROPERTIES IMPORTED_LOCATION ${OPENSSL_DIR}/${ANDROID_ABI}/lib/libcurl.a)
+
+    # add to target_include_directories
+    # target_include_directories(${PROJECT_NAME} PRIVATE ${OPENSSL_DIR}/${ANDROID_ABI}/include)
+
+else()
+    set(OPENSSL_USE_STATIC_LIBS TRUE)
+    include(FindOpenSSL)
+
+    message("OpenSSL include dir: ${OPENSSL_INCLUDE_DIR}")
+    message("OpenSSL libraries: ${OPENSSL_LIBRARIES}")
+
+    include_directories(${OPENSSL_INCLUDE_DIR})
+    link_directories(${OPENSSL_LIBRARIES})
+    list(APPEND LIB_LIST ${OPENSSL_LIBRARIES})
+endif()
 
 find_package( ZLIB REQUIRED )
 
@@ -210,5 +234,9 @@ add_dependencies(${PROJECT_NAME} uvw)
 
 
 # Add the libraries to the linker
-target_link_libraries(${PROJECT_NAME} ${LIBSERIAL} ${LIBMARNAV} ${LIBUV} ${LIBUWS} ${ZLIB_LIBRARIES} ${OPENSSL_LIBRARIES})
+if (ANDROID)
+    target_link_libraries(${PROJECT_NAME} ${LIBSERIAL} ${LIBMARNAV} ${LIBUV} ${LIBUWS} ${ZLIB_LIBRARIES} libcurl libssl libcrypto)
+else()
+    target_link_libraries(${PROJECT_NAME} ${LIBSERIAL} ${LIBMARNAV} ${LIBUV} ${LIBUWS} ${ZLIB_LIBRARIES} ${OPENSSL_LIBRARIES})
+endif()
 
