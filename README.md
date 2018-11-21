@@ -138,11 +138,31 @@ foo@bar:~$ cmake \
 -DCMAKE_BUILD_TYPE=Release \
 -DANDROID_ABI=${ABI_LEVEL} \
 -DANDROID_NATIVE_API_LEVEL=${API_LEVEL} ..
+-- Check for working C compiler: /Applications/android-sdk-macosx/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang
+-- Check for working C compiler: /Applications/android-sdk-macosx/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Check for working CXX compiler: /Applications/android-sdk-macosx/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++
+-- Check for working CXX compiler: /Applications/android-sdk-macosx/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Hello from Android build!
+-- Found ZLIB: /Applications/android-sdk-macosx/ndk-bundle/platforms/android-27/arch-x86_64/usr/lib64/libz.so (found version "1.2.7")
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/sokol/git/signalk-server-cpp/build-android
 ```
 
 The compiling fails with the following errors:
 ```console
+foo@bar:~$ cmake --build .
+
 [.... OTHER MESSAGES ....]
+
 CMake Warning at CMakeLists.txt:8 (find_package):
   By not providing "Findcatkin.cmake" in CMAKE_MODULE_PATH this project has
   asked CMake to find a package configuration file provided by "catkin", but
