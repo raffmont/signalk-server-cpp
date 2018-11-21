@@ -125,16 +125,19 @@ First, make sure you have downloaded the [Android NDK](https://developer.android
 Then, create a folder `build-android` and move into that. Use `source` to create the environment for the Android compiling. Use `cmake` to create the Makefile (for other ABIs check the above links):
 ```console
 foo@bar:~$ export NDK_PATH=<path to the NDK installation>
+foo@bar:~$ export ABI_LEVEL="x86_64"
+foo@bar:~$ export API_LEVEL=27
 foo@bar:~$ mkdir build-android
 foo@bar:~$ cd build-android
-foo@bar:~$ source ../android-configure-x86_64 ${NDK_PATH} 27
+foo@bar:~$ source ../android-configure-${ABI_LEVEL} ${NDK_PATH} ${API_LEVEL}
 foo@bar:~$ ls
 android-toolchain-x86_64
 foo@bar:~$ cmake \
 -DCMAKE_TOOLCHAIN_FILE=${NDK_PATH}/build/cmake/android.toolchain.cmake \
 -DANDROID_NDK=${NDK_PATH}  \
 -DCMAKE_BUILD_TYPE=Release \
--DANDROID_ABI="x86_64" ..
+-DANDROID_ABI=${ABI_LEVEL} \
+-DANDROID_NATIVE_API_LEVEL=${API_LEVEL} ..
 ```
 
 The compiling fails with the following errors:
