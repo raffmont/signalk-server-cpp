@@ -41,7 +41,6 @@ find_package( ZLIB REQUIRED )
 
 
 #### serial https://github.com/wjwwood/serial
-
 ExternalProject_Add(serial
         GIT_REPOSITORY https://github.com/raffmont/serial.git
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_LOCATION}
